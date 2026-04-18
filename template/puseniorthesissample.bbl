@@ -1,0 +1,23 @@
+\begin{thebibliography}{1}
+
+\bibitem{Watkins92}
+Peter~Dayan Christopher~Watkins.
+\newblock Q-learning.
+\newblock {\em Machine Learning}, 8:279--292, 1992.
+
+\bibitem{Kumar1985}
+P.~Kumar.
+\newblock A survey of some results in stochastic adaptive control.
+\newblock {\em SIAM Journal on Control and Optimization}, 23(3):329--380, 1985.
+
+\bibitem{Mitra1986}
+Debasis Mitra, Fabio Romeo, and Alberto Sangiovanni-Vincentelli.
+\newblock Convergence and finite-time behavior of simulated annealing.
+\newblock {\em Advances in Applied Probability}, 18(3):pp. 747--771, 1986.
+
+\bibitem{Seneta06}
+E.~Seneta.
+\newblock {\em Non-negative Matrices and Markov Chains}.
+\newblock Springer New York, 2006.
+
+\end{thebibliography}

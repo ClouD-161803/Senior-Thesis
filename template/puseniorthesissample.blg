@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99c (TeX Live 2009)
+The top-level auxiliary file: puseniorthesissample.aux
+A level-1 auxiliary file: ch1.aux
+A level-1 auxiliary file: ch2.aux
+The style file: plain.bst
+A level-1 auxiliary file: app1.aux
+Database file #1: ambiguityBonus.bib
+You've used 4 entries,
+            2118 wiz_defined-function locations,
+            531 strings with 4575 characters,
+and the built_in function-call counts, 1196 in all, are:
+= -- 115
+> -- 39
+< -- 0
++ -- 17
+- -- 12
+* -- 83
+:= -- 207
+add.period$ -- 12
+call.type$ -- 4
+change.case$ -- 17
+chr.to.int$ -- 0
+cite$ -- 4
+duplicate$ -- 45
+empty$ -- 107
+format.name$ -- 12
+if$ -- 249
+int.to.chr$ -- 0
+int.to.str$ -- 4
+missing$ -- 5
+newline$ -- 23
+num.names$ -- 8
+pop$ -- 16
+preamble$ -- 1
+purify$ -- 14
+quote$ -- 0
+skip$ -- 27
+stack$ -- 0
+substring$ -- 96
+swap$ -- 4
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 14
+warning$ -- 0
+while$ -- 11
+width$ -- 5
+write$ -- 45
