@@ -1,0 +1,235 @@
+@Book{BOYDCONVEX,
+  Title                    = {Convex Optimization},
+  Author                   = {Boyd, S. and Vandenberghe, L.},
+  Publisher                = {{Cambridge University Press}},
+  Year                     = {2004},
+  DOI                      ={10.1017/CBO9780511804441},
+  ISBN         = {978-0521833783},
+  Edition = {1},
+  Owner                    = {idris},
+  Priority                 = {4},
+  Timestamp                = {2006-04-12T21:13:14.000+0200}
+}
+
+@Article{BAUSCHKESWISS,
+  Title                    = {Projection Methods: Swiss Army Knives for Solving Feasibility and Best
+Approximation Problems with Halfspaces},
+  Author                   = {H. Bauschke and V. Koch},
+  Journal                  = {ArXiv e-prints},
+  Year                     = {2013},
+  
+  Eprint       = {1301.4506},
+  Month                    = jan,
+
+  Archiveprefix            = {arXiv},
+  Owner                    = {idris},
+  Timestamp                = {2019.11.03}
+}
+
+@Book{OPTIMNESTEROV,
+  Title                    = {Introductory Lectures on Convex Optimization: A Basic Course},
+  Author                   = {Nesterov, Y.},
+  Publisher                = {Springer Science \& Business Media},
+  Year                     = {2003},
+  Series                   = {Applied Optimization},
+  DOI = {10.1007/978-1-4419-8853-9},
+  Edition = {1},
+  Owner                    = {idris},
+  Timestamp                = {2019.07.18}
+}
+
+@article{KEMPF20206542,
+title = {Fast Gradient Method for Model Predictive Control with Input Rate and Amplitude Constraints.},
+journal = {IFAC-PapersOnLine},
+volume = {53},
+number = {2},
+pages = {6542-6547},
+year = {2020},
+note = {21st IFAC World Congress},
+issn = {2405-8963},
+doi = {https://doi.org/10.1016/j.ifacol.2020.12.070},
+url = {https://www.sciencedirect.com/science/article/pii/S2405896320303268},
+author = {I. Kempf and P. Goulart and S. Duncan},
+keywords = {Model Predictive Control (MPC), Fast Gradient Method, Dykstra’s Method, Alternating Direction of Multipliers Method (ADMM), Projection, Rate Constraints},
+abstract = {This paper is concerned with the computing efficiency of model predictive control (MPC) problems for dynamical systems with both rate and amplitude constraints on the inputs. Instead of augmenting the decision variables of the underlying finite-horizon optimal control problem to accommodate the input rate constraints, we propose to solve this problem using the fast gradient method, where the projection step is solved using Dykstra’s algorithm. We show that, relative to the Alternating Direction of Method Multipliers (ADMM), this approach greatly reduces the computation time while halving the memory usage. Our algorithm is implemented in C and its performance demonstrated using several examples.}
+}
+
+@InProceedings{DYKSTRA,
+  Title                    = {A Method for Finding Projections onto the Intersection of Convex Sets in Hilbert Spaces},
+  Author                   = {J. P. Boyle and R. L. Dykstra},
+  Booktitle                = {Advances in Order Restricted Statistical Inference},
+  Year                     = {1986},
+  Pages                    = {28--47},
+  Publisher                = {Springer New York},
+  DOI = {10.1007/978-1-4613-9940-7_3},
+
+  Owner                    = {idris},
+  Timestamp                = {2020.04.13}
+}
+
+@Article{DYKSTRASTALLING,
+  Title                    = {On {Dykstra’s} algorithm: finite convergence, stalling, and the method of alternating projections},
+  Author                   = {H. H. Bauschke and R. S. Burachik and D. B. Herman and C. Y. Kaya},
+  Journal                  = {Optimization Letters},
+  volume={14},
+  number={8},
+  pages={1975--1987},
+  DOI = {10.1007/s11590-020-01600-4},
+  Year                     = {2020},
+  Owner                    = {idris},
+  Timestamp                = {2025.11.20}
+}
+
+@Book{NEUMANN,
+  Title                    = {Functional Operators: The Geometry of Orthogonal Spaces},
+  Author                   = {{V}on {N}eumann, J.},
+  Publisher                = {Princeton University Press},
+  Year                     = {1951},
+  Number                   = {Bd. 2},
+  Series                   = {Annals of Mathematics Studies},
+  DOI = {10.1515/9781400882250},
+  ISBN                     = {9780691095790},
+  Owner                    = {idris},
+  Timestamp                = {2019.11.05}
+}
+
+@Article{BREGMAN1965,
+  Title                    = {The method of projections for finding the common point of convex sets},
+  Author                   = {Bregman, L. M.},
+  Journal                  = {Soviet Mathematics Doklady},
+  Year                     = {1965},
+  
+  Pages                    = {688-692},
+  Volume                   = {6},
+  Owner                    = {idris},
+  Timestamp                = {2024.09.09}
+}
+
+@Article{DYKSTRAPERKINS,
+  Title                    = {A Convergence Analysis of {Dykstra's} Algorithm for Polyhedral Sets},
+  Author                   = {C. Perkins},
+  Journal                  = {SIAM Journal on Numerical Analysis},
+  Year                     = {2002},
+
+  Month                    = jul,
+  Number                   = {2},
+  Pages                    = {792--804},
+  Volume                   = {40},
+  Doi = {10.1137/S0036142900367557},
+  Owner                    = {idris},
+  Timestamp                = {2022.02.15},
+  Abstract = { Let H be a nonempty closed convex set in a Hilbert space X determined by the intersection of a finite number of closed half spaces. It is well known that given an \$x\_0 \in X\$, Dykstra's algorithm applied to this collection of closed half spaces generates a sequence of iterates that converge to PH(x0 ), the orthogonal projection of x0 onto H. The iterates, however, do not necessarily lie in H. We propose a combined Dykstra--conjugate-gradient method such that, given an \$\varepsilon > 0\$, the algorithm computes an \$x \in H\$ with \$\|x - P\_H(x\_0)\| < \varepsilon\$. Moreover, for each iterate xm of Dykstra's algorithm we calculate a bound for \$\|x\_m - P\_H(x\_0)\|\$ that approaches zero as m tends to infinity. Applications are made to computing bounds for \$\|x\_m - P\_H(x\_0)\|\$ where H is a polyhedral cone. Numerical results are presented from a sample isotone regression problem. }
+}
+
+@Article{DYKSTRAPOLY,
+  Title                    = {The rate of convergence of {D}ykstra's cyclic projections algorithm: The polyhedral case},
+  Author                   = {F. Deutsch and H. Hundal},
+  Journal                  = {Numerical Functional Analysis and Optimization},
+  Year                     = {1994},
+
+  Month                    = may,
+  Number                   = {6},
+  Pages                    = {537--565},
+  Volume                   = {15},
+  DOI = {10.1080/01630569408816580},
+
+  Owner                    = {idris},
+  Timestamp                = {2021.07.15}
+}
+
+@Article{DYKSTRAPOLY2,
+  Title                    = {On the convergence properties of {Hildreth's} quadratic programming algorithm},
+  Author                   = {A. N. Iusem and A. R. {de Pierro}},
+  Journal                  = {Math. Prog. Ser. A and B},
+  Year                     = {1990},
+
+  Month                    = may,
+  Number                   = {1},
+  Pages                    = {37--51},
+  Volume                   = {47},
+  DOI = {10.1007/BF01580851},
+
+  Owner                    = {idris},
+  Timestamp                = {2022.02.15}
+}
+
+@Article{XUPOLY,
+  Title                    = {Successive Approximate Algorithm for Best Approximation from a Polyhedron},
+  Author                   = {S. Xu},
+  Journal                  = {J. Approx. Theory},
+  Year                     = {1998},
+
+  Month                    = jun,
+  Number                   = {3},
+  Pages                    = {415--433},
+  Volume                   = {93},
+  DOI = {10.1006/jath.1998.3174},
+
+  Owner                    = {idris},
+  Timestamp                = {2022.02.15}
+}
+
+@article{osqp,
+  author  = {Stellato, B. and Banjac, G. and Goulart, P. and Bemporad, A. and Boyd, S.},
+  title   = {{OSQP}: an operator splitting solver for quadratic programs},
+  journal = {Mathematical Programming Computation},
+  year    = {2020},
+  volume  = {12},
+  number  = {4},
+  pages   = {637--672},
+  doi     = {10.1007/s12532-020-00179-2},
+  url     = {https://doi.org/10.1007/s12532-020-00179-2},
+}
+
+@article{ocpb:16,
+    author       = {B. O'Donoghue and E. Chu and N. Parikh and S. Boyd},
+    title        = {Conic Optimization via Operator Splitting and Homogeneous Self-Dual Embedding},
+    journal      = {Journal of Optimization Theory and Applications},
+    month        = jun,
+    year         = {2016},
+    volume       = {169},
+    number       = {3},
+    pages        = {1042-1068},
+    doi = {10.1007/s10957-016-0892-3},
+    url          = {http://stanford.edu/~boyd/papers/scs.html},
+}
+
+@misc{DykstraProjectRepo,
+  author = {C. Vestini and I. Kempf},
+  title  = {{Dykstra-Project}: Repository for ``Fast-Forwarding Stalling in Dykstra's Algorithm"},
+  year   = {2025},
+  publisher = {GitHub},
+  howpublished = {\url{https://github.com/ClouD-161803/Dykstra-Project.git}}
+}
+
+@article{Horwood2014,
+   abstract = {In order to provide a more statistically rigorous treatment of uncertainty in the space surveillance tracking environment, a new class of multivariate probability density functions is proposed called the Gauss von Mises (GVM) family of distributions. The distinguishing feature of the GVM distribution is its definition on a cylindrical manifold, the underlying state space in which systems of orbital element coordinates are more accurately defined. When specialized to GVM distributions, the prediction step of the general Bayesian nonlinear filter is shown to be tractable and viable, thereby providing a novel means to propagate space object orbital uncertainty under nonlinear perturbed two-body dynamics. Results demonstrate that uncertainty propagation with the new GVM distribution can be achieved at the same cost as the traditional unscented Kalman filter and can maintain “uncertainty realism” for up to eight times as long.},
+   author = {Joshua T. Horwood and Aubrey B. Poore},
+   doi = {10.1137/130917296},
+   issn = {21662525},
+   issue = {1},
+   journal = {SIAM-ASA Journal on Uncertainty Quantification},
+   keywords = {Covariance realism,Directional statistics,Nonlinear filtering,Space surveillance,Uncertainty propagation,Uncertainty realism},
+   pages = {276-304},
+   publisher = {Society for Industrial and Applied Mathematics Publications},
+   title = {Gauss von Mises distribution for improved uncertainty realism in space situational awareness},
+   volume = {2},
+   year = {2014},
+}
+
+@article{monge1781memoire,
+  title={M{\'e}moire sur la th{\'e}orie des d{\'e}blais et des remblais},
+  author={Monge, Gaspard},
+  journal={Histoire de l'Acad{\'e}mie Royale des Sciences de Paris},
+  year={1781}
+}
+@article{Baptista2022,
+  title={Coupling Techniques for Nonlinear Ensemble Filtering},
+  author={Spantini, Alessio and Baptista, Ricardo and Marzouk, Youssef},
+  journal={SIAM Review},
+  volume={64},
+  number={4},
+  pages={921--953},
+  year={2022},
+  publisher={SIAM}
+}

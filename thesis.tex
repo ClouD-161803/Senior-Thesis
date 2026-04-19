@@ -1,0 +1,70 @@
+\documentclass[lof,lot,los,12pt,advisercopy]{puseniorthesis}
+%options to class:
+% lof - generate list of figures
+% lot - generate list of tables
+% Xpt - font size
+% filecopy - note that this is 'File Copy' on title page
+% advisercopy - note that this is 'Adviser Copy' on title page
+% readercopy - note that this is 'Reader Copy' on title page
+% progress - change title page to say 'Progress Report' instead of 'Final Report'
+
+\input{packages}
+
+% Required inputs:
+\author{Claudio Vestini}
+\classyear{`26}
+\adviser{Ryne Beeson, \newline Bartolomeo Stellato (ORFE)}
+\reader{\textcolor{red}{READER}}
+\title{\textcolor{red}{TITLE}}
+\dept{Mechanical and Aerospace Engineering}
+\submitdate{April 23, 2026}
+\course{MAE 499}
+\abstract{\input{sections/0_abstract}}
+
+% Optional inputs (any of these can be omitted)
+% \extranotes{These are a few lines of optional notes} 
+\dedication{\textcolor{red}{DEDICATION}}
+\acknowledgements{\textcolor{red}{AKNOWLEDGMENTS}}
+
+\numberwithin{equation}{section}
+
+\begin{document}
+
+\chapter{Introduction} \label{ch:introduction}
+\input{sections/1_1_introduction}
+
+\chapter{Fast-forwarding stalling in Dykstra's algorithm} \label{ch:dykstra}
+\input{sections/2_1_background_projections}
+\input{sections/2_2_dykstras_algorithm}
+\input{sections/2_3_stalling_phenomenon}
+\input{sections/2_4_closed_form_solution}
+\input{sections/2_5_fast_forward_algorithm}
+\input{sections/2_6_numerical_experiments}
+
+\chapter{Optimal transport and triangular maps} \label{ch:optimal_transport}
+% \input{sections/3_1_optimal_transport_kr}
+% \input{sections/3_2_hermite_basis}
+% \input{sections/3_3_physical_structure}
+% \input{sections/3_4_constrained_optimisation}
+
+\chapter{A highly scalable inexact projection framework} \label{ch:optimisation}
+% \input{sections/4_1_outer_loop_pgd}
+% \input{sections/4_2_sgd_minibatching}
+% \input{sections/4_3_iterative_hard_thresholding}
+% \input{sections/4_4_inner_loop_integration}
+
+\chapter{Application to orbital mechanics} \label{ch:numerical_experiments}
+% \input{sections/5_1_satellite_uncertainty}
+% \input{sections/5_2_reconstructing_shear}
+% \input{sections/5_3_performance_scaling}
+
+\chapter{Conclusion and future work} \label{ch:conclusion}
+\input{sections/6_1_conclusion}
+
+\printbibliography
+
+\appendix
+
+\textcolor{red}{APPENDIX}
+
+\end{document}
