@@ -32,25 +32,25 @@ Our overarching objective is to identify a deterministic transport map $S: \math
                 cycle;
             
             % Scatter Particles (x_i)
-            \node[particle] at (-1.4, 2.0) {};
-            \node[particle] at (-1.0, 1.2) {};
-            \node[particle] at (-0.6, 0.6) {};
-            \node[particle] at (-0.2, -0.2) {};
-            \node[particle] at (0, -0.5) {};
-            \node[particle] at (0.2, -0.2) {};
-            \node[particle] at (0.6, 0.6) {};
-            \node[particle] at (1.0, 1.2) {};
-            \node[particle] at (1.4, 2.0) {};
+            \node[particle, fill=red!80] at (-1.4, 2.0) {};
+            \node[particle, fill=orange!80] at (-1.0, 1.2) {};
+            \node[particle, fill=yellow!80!black] at (-0.6, 0.6) {};
+            \node[particle, fill=green!80!black] at (-0.2, -0.2) {};
+            \node[particle, fill=cyan!80!black] at (0, -0.5) {};
+            \node[particle, fill=blue!80] at (0.2, -0.2) {};
+            \node[particle, fill=purple!80] at (0.6, 0.6) {};
+            \node[particle, fill=magenta!80] at (1.0, 1.2) {};
+            \node[particle, fill=pink!80!black] at (1.4, 2.0) {};
             
             % Label
-            \node[below=0.8cm of {(0,-0.8)}] {Target measure, $p(x)$};
+            \node at (0, -1.6) {Target measure, $p(x)$};
         \end{scope}
 
         % ----------------------------------------------------
         % TRANSPORT MAP ARROW
         % ----------------------------------------------------
         % The map pushes the complex target TO the standard normal reference
-        \draw[->, very thick, color=blue!80] (2.8, 1) -- (5.2, 1) node[midway, above, text=black] {$S(x)$};
+        \draw[->, very thick, color=blue!80] (2.8, 1) to[bend left=10] node[midway, above, text=black] {$S(x)$} (5.2, 1);
 
         % ----------------------------------------------------
         % RIGHT SIDE: Reference Distribution (Standard Normal)
@@ -66,18 +66,18 @@ Our overarching objective is to identify a deterministic transport map $S: \math
             \draw[thick, draw=blue!80, fill=blue!20] (0,0) circle (0.6);
             
             % Scatter Mapped Particles (S(x_i))
-            \node[mapped_particle] at (-0.8, 0.5) {};
-            \node[mapped_particle] at (-0.4, 1.0) {};
-            \node[mapped_particle] at (-0.2, -0.6) {};
-            \node[mapped_particle] at (0.5, -0.3) {};
-            \node[mapped_particle] at (0.1, 0.2) {};
-            \node[mapped_particle] at (0.6, 0.8) {};
-            \node[mapped_particle] at (1.1, -0.2) {};
-            \node[mapped_particle] at (-1.2, -0.8) {};
-            \node[mapped_particle] at (0.3, -1.3) {};
+            \node[mapped_particle, fill=red!80] at (-1.2, 0.5) {};
+            \node[mapped_particle, fill=orange!80] at (-0.8, -0.2) {};
+            \node[mapped_particle, fill=yellow!80!black] at (-0.4, 0.8) {};
+            \node[mapped_particle, fill=green!80!black] at (-0.1, -0.6) {};
+            \node[mapped_particle, fill=cyan!80!black] at (0, 0.1) {};
+            \node[mapped_particle, fill=blue!80] at (0.2, 0.6) {};
+            \node[mapped_particle, fill=purple!80] at (0.5, -0.4) {};
+            \node[mapped_particle, fill=magenta!80] at (0.9, 0.3) {};
+            \node[mapped_particle, fill=pink!80!black] at (1.3, -0.2) {};
             
             % Label
-            \node[below=0.8cm of {(0,-1.8)}] {Reference measure, $\eta(z)$};
+            \node at (0, -3.1) {Reference measure, $\eta(z)$};
         \end{scope}
 
     \end{tikzpicture}
