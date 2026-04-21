@@ -1,0 +1,18 @@
+\section{Summary} \label{sec:optimal_transport_summary}
+
+This chapter outlined the mathematical foundation of the optimal transport framework adopted in this thesis. Our overarching objective is to find the coefficient vector that minimises the objective $f(w^{(k)})$ defined in~\eqref{eq:finite_objective} subject to constraint $w^{(k)} \in \mathcal{H}$.
+
+\subsection{Connection with Dykstra's algorithm}
+
+To navigate this constrained landscape, we implement a Projected Gradient Descent (PGD) framework. In this approach (which we will treat in more detail in Chapter~\ref{ch:optimisation}), we compute the gradient of the objective and take an unconstrained descent step, resulting in an intermediate, unconstrained point which we denote $w^\circ$. 
+
+Since the unconstrained point $w^\circ$ will frequently violate the monotonicity conditions (i.e., $w^\circ \notin \mathcal{H}$), we must project it back onto the feasible polyhedral intersection at each PGD iteration. This projection must alter the learned coefficients as minimally as possible to retain the maximum likelihood data. Therefore, the projection operation requires us to find the unique point $w^\star \in \mathcal{H}$ that minimises the Euclidean distance to the unconstrained point $w^\circ$. Mathematically, this is equivalent to solving the following CQP:
+\begin{equation}
+\begin{array}{ll}
+    \displaystyle \minimise_{w \in \mathbb{R}^{d}} & \frac{1}{2}\|w - w^\circ\|_{2}^2 \\
+    \text{subject to} & -Aw \le -\epsilon_m.
+\end{array}
+\label{eq:cqp_projection}
+\end{equation}
+
+This formulation is equivalent to~\ref{eq:projection}. Solving this Euclidean projection problem at each PGD iteration bridges the optimal transport framework defined in this chapter and the fast-forward Dykstra algorithm (Algorithm~\ref{alg:fastforward}) derived in Chapter~\ref{ch:dykstra}.

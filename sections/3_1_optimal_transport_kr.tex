@@ -1,9 +1,9 @@
 \section{The Knothe-Rosenblatt rearrangement}
 \label{sec:optimal_transport_kr}
 
-The fundamental goal of optimal transport is to construct a deterministic coupling between two probability measures. We denote a continuous state space as $\mathcal{X} \subseteq \mathbb{R}^d$. We consider a target probability measure, which is often a complex and non-Gaussian distribution arising from nonlinear physical dynamics. In practice, this target distribution is analytically intractable to evaluate directly. Instead, we assume access to a discrete ensemble of $n$ samples, or particles, denoted by $\{x^{(1)}, \dots, x^{(n)}\} \subset \mathcal{X}$, drawn from this target distribution. 
+The fundamental goal of optimal transport is to construct a deterministic coupling between two probability measures. We denote a continuous state space as $\mathcal{X} \subseteq \mathbb{R}^D$. We consider a target probability measure, which is often a complex and non-Gaussian distribution arising from nonlinear physical dynamics. In practice, this target distribution is analytically intractable to evaluate directly. Instead, we assume access to a discrete ensemble of $n$ samples, or particles, denoted by $\{x^{(1)}, \dots, x^{(n)}\} \subset \mathcal{X}$, drawn from this target distribution. 
 
-Our overarching objective is to identify a deterministic transport map $S: \mathbb{R}^d \rightarrow \mathbb{R}^d$ that pushes the complex target distribution forward to a simple, well-characterised reference distribution. By transforming the particles into a domain where their distribution is known, subsequent analytical tasks in aerospace engineering, such as filtering or uncertainty propagation, become computationally tractable. We fix the reference measure as the standard multivariate normal distribution, $\mathcal{N}(0, I_d)$.
+Our overarching objective is to identify a deterministic transport map $S: \mathbb{R}^D \rightarrow \mathbb{R}^D$ that pushes the complex target distribution forward to a simple, well-characterised reference distribution. By transforming the particles into a domain where their distribution is known, subsequent analytical tasks in aerospace engineering, such as filtering or uncertainty propagation, become computationally tractable. We fix the reference measure as the standard multivariate normal distribution, $\mathcal{N}(0, I_D)$.
 
 \begin{figure}[htbp]
     \centering
@@ -17,33 +17,24 @@ Our overarching objective is to identify a deterministic transport map $S: \math
         contour3/.style={fill=blue!30, draw=blue!40, thick},
         contour4/.style={fill=blue!40, draw=blue!50, thick}
     ]
-
-        % ----------------------------------------------------
-        % LEFT PANEL: Target Measure (Exact Parametric Shear)
-        % ----------------------------------------------------
+    
         \begin{scope}[shift={(0,0)}]
-            % Axes
+
             \draw[axis] (-2.5, 0) -- (2.5, 0) node[right, text=black] {$x_1$};
             \draw[axis] (0, -3.1) -- (0, 3.0) node[above, text=black] {$x_2$};
             
-            % Exact Mathematical Contours: x_1 = c*cos(t), x_2 = c*sin(t) + 0.4*c^2*cos^2(t) - 0.5
-            % Level 1 (Outer, c = 2.4)
             \draw[contour1] plot[domain=0:360, samples=100, smooth cycle] 
-                ({2.4*cos(\x)}, {2.4*sin(\x) + 2.304*cos(\x)*cos(\x) - 0.5});
+                ({2.4*cos(\x)}, {2.4*sin(\x) + 4.032*cos(\x)*cos(\x) - 0.5});
                 
-            % Level 2 (c = 1.8)
             \draw[contour2] plot[domain=0:360, samples=100, smooth cycle] 
-                ({1.8*cos(\x)}, {1.8*sin(\x) + 1.296*cos(\x)*cos(\x) - 0.5});
+                ({1.8*cos(\x)}, {1.8*sin(\x) + 2.268*cos(\x)*cos(\x) - 0.5});
                 
-            % Level 3 (c = 1.1)
             \draw[contour3] plot[domain=0:360, samples=100, smooth cycle] 
-                ({1.1*cos(\x)}, {1.1*sin(\x) + 0.484*cos(\x)*cos(\x) - 0.5});
+                ({1.1*cos(\x)}, {1.1*sin(\x) + 0.847*cos(\x)*cos(\x) - 0.5});
                 
-            % Level 4 (Inner Core, c = 0.5)
             \draw[contour4] plot[domain=0:360, samples=100, smooth cycle] 
-                ({0.5*cos(\x)}, {0.5*sin(\x) + 0.100*cos(\x)*cos(\x) - 0.5});
-            
-            % Exact Transformed Empirical Ensemble Scatter
+                ({0.5*cos(\x)}, {0.5*sin(\x) + 0.175*cos(\x)*cos(\x) - 0.5});
+
             \node[particle] at (0.1, -0.3) {};
             \node[particle] at (-0.3, -0.36) {};
             \node[particle] at (0.2, -0.88) {};
@@ -54,44 +45,33 @@ Our overarching objective is to identify a deterministic transport map $S: \math
             \node[particle] at (-1.1, 0.98) {};
             \node[particle] at (0.4, 0.96) {};
             \node[particle] at (-1.4, -0.52) {};
-            \node[particle] at (1.5, -0.8) {};
+            \node[particle] at (1.4, -0.8) {};
             \node[particle] at (0.8, -1.84) {};
             \node[particle] at (-1.7, 1.06) {};
-            \node[particle] at (1.8, 1.9) {};
+            \node[particle] at (1.6, 1.9) {};
             \node[particle] at (-0.6, -2.26) {};
-            \node[particle] at (2.0, 0.9) {};
-            \node[particle] at (-2.1, 0.16) {};
+            \node[particle] at (1.7, 0.9) {};
+            \node[particle] at (-2.1, 2.86) {};
             \node[particle] at (0.2, 1.72) {};
             \node[particle] at (-1.0, 1.9) {};
 
-            % Explicit Sample Notation
             \node[particle] (xi) at (1.2, 0.58) {};
             \node[right=2pt] at (xi) {$x^{(i)}$};
             
-            % Sub-caption
-            \node[below=0.8cm of {(0,-3.0)}] {Target measure, $p(x)$};
+            \node[below=0.3cm of {(2.0,-1.0)}] {$p(x)$};
         \end{scope}
 
-        % ----------------------------------------------------
-        % CENTRAL MAP OPERATOR
-        % ----------------------------------------------------
         \draw[->, line width=1.5pt, color=black!80] (3.0, 0.75) -- (5.0, 0.75) node[midway, above, text=black] {$S^i(x)$};
 
-        % ----------------------------------------------------
-        % RIGHT PANEL: Reference Measure (Standard Normal)
-        % ----------------------------------------------------
         \begin{scope}[shift={(8.0, 0.0)}]
-            % Axes
             \draw[axis] (-3.0, 0) -- (3.0, 0) node[right, text=black] {$z_1$};
             \draw[axis] (0, -3.1) -- (0, 3.0) node[above, text=black] {$z_2$};
-            
-            % Smooth, Nested Gradient Contours (Isotropic)
+
             \draw[contour1] (0,0) circle (2.4);
             \draw[contour2] (0,0) circle (1.8);
             \draw[contour3] (0,0) circle (1.1);
             \draw[contour4] (0,0) circle (0.5);
-            
-            % Exact Isotropic Mapped Scatter
+
             \node[mapped_particle] at (0.1, 0.2) {};
             \node[mapped_particle] at (-0.3, 0.1) {};
             \node[mapped_particle] at (0.2, -0.4) {};
@@ -108,72 +88,73 @@ Our overarching objective is to identify a deterministic transport map $S: \math
             \node[mapped_particle] at (1.8, 1.1) {};
             \node[mapped_particle] at (-0.6, -1.9) {};
             \node[mapped_particle] at (2.0, -0.2) {};
-            \node[mapped_particle] at (-2.1, -1.1) {};
+            \node[mapped_particle] at (-2.0, -1.1) {};
             \node[mapped_particle] at (0.2, 2.2) {};
             \node[mapped_particle] at (-1.0, 2.0) {};
-
-            % Explicit Sample Notation
+            
             \node[mapped_particle] (zi) at (1.2, 0.5) {};
             \node[right=2pt] at (zi) {$z^{(i)}$};
-            
-            % Sub-caption
-            \node[below=0.8cm of {(0,-3.0)}] {Reference measure, $\eta(z)$};
+
+            \node[below=0.45cm of {(2.5,-1.0)}] { $\eta(z)$};
         \end{scope}
 
     \end{tikzpicture}
-    \caption{A schematic illustrating optimal transport via a deterministic map $S$ pushing a sheared target measure forward to a standard normal reference.}
+    \caption{A schematic illustrating optimal transport via a deterministic map $S$.}
     \label{fig:optimal_transport_schematic}
 \end{figure}
 
 The problem of finding a valid transport map $S$ such that the pushforward of the target measure equals the reference measure is highly underdetermined; without further constraints, there exist infinitely many such couplings. To render the problem identifiable, we restrict our hypothesis space to the Knothe-Rosenblatt (KR) rearrangement. The KR map is strictly defined by two structural properties: it is lower-triangular, and it is strictly monotone~\cite{Baptista2022}. We partition the map into its scalar components as
-\begin{equation}
-    S(x) = \begin{bmatrix} S^1(x_1) \\ S^2(x_1, x_2) \\ \vdots \\ S^d(x_1, \dots, x_d) \end{bmatrix}.
+\begin{equation*}
+    S(x) = \begin{bmatrix} S^1(x_1) \\ S^2(x_1, x_2) \\ \vdots \\ S^D(x_1, \dots, x_d) \end{bmatrix}.
     \label{eq:kr_map_structure}
-\end{equation}
+\end{equation*}
 
 To push one continuous measure forward to another while maintaining a valid probability density, the transport map must be a \emph{global diffeomorphism}, a continuously differentiable, bijective mapping. Bijectivity guarantees that the transformation is invertible and that disparate physical states in the target space do not map to the identical coordinate in the reference space. Thus, to ensure the map $S$ conserves probability mass and is invertible, the map must be \emph{monotonic}~\cite{Baptista2022}. 
 
 The lower-triangular structure ensures that the Jacobian matrix of the map, $\nabla S(x)$, is inherently lower-triangular. Recall that the determinant of a triangular matrix is given by the product of its diagonal entries. The monotonicity constraint thus dictates that each individual component $S^k$ must be a strictly increasing function with respect to its own $k$-th argument. Using $\partial_k$ to denote the partial derivative with respect to the $k$-th variable, we require
 \begin{equation}
-    \partial_k S^k(x) > 0 \quad \forall k \in \{1, \dots, d\}.
+    \boxed{
+    \partial_k S^k(x) > 0 \quad \forall k \in \{1, \dots, d\}}.
     \label{eq:monotonicity_continuous}
 \end{equation}
 
 To find the optimal map, we frame the task as a density estimation problem. We denote the unknown probability density function of the target distribution as $p(\cdot)$ and the probability density function of the standard normal reference distribution as $\eta(\cdot)$. By the fundamental change of variables formula for probability density functions, the target density evaluated at a spatial coordinate $x$ is given by
-\begin{equation}
+\begin{equation*}
     p(x) = \eta(S(x)) \det \nabla S(x).
     \label{eq:change_of_variables}
-\end{equation}
+\end{equation*}
 
-To construct a maximum likelihood estimator, we evaluate the logarithm of the target density. Taking the natural logarithm of both sides of \eqref{eq:change_of_variables} yields
-\begin{equation}
+To construct a maximum likelihood estimator, we evaluate the logarithm of the target density. Taking the natural logarithm of both sides yields
+\begin{equation*}
     \log p(x) = \log \eta(S(x)) + \log \det \nabla S(x).
     \label{eq:log_density_initial}
-\end{equation}
+\end{equation*}
 
-Because the chosen reference distribution is a standard multivariate normal, its $d$ spatial components are mutually independent. The density function is $\eta(x) \propto \exp\left(-\frac{1}{2} \|x\|_{2}^2\right)$, meaning the log-density is proportional to $-\frac{1}{2}\|S(x)\|_{2}^2$. Furthermore, substituting the product of the diagonal elements for the determinant of the Jacobian simplifies the log-determinant term into a summation. Applying these substitutions to \eqref{eq:log_density_initial} yields
-\begin{equation}
+Because the chosen reference distribution is a standard multivariate normal, its $d$ spatial components are mutually independent. The density function is $\eta(z) \propto \exp\left(-\frac{1}{2} \|z\|_{2}^2\right)$, meaning the log-density is proportional to $-\frac{1}{2}\|S(x)\|_{2}^2$. Furthermore, substituting the product of the diagonal elements for the determinant of the Jacobian simplifies the log-determinant term into a summation. Applying these substitutions yields
+\begin{equation*}
     \log p(x) \propto -\frac{1}{2} \|S(x)\|_{2}^2 + \log \left( \prod_{k=1}^d \partial_k S^k(x) \right) = -\frac{1}{2} \|S(x)\|_{2}^2 + \sum_{k=1}^d \log \partial_k S^k(x).
     \label{eq:log_density_expanded}
-\end{equation}
+\end{equation*}
 
-Following a \emph{maximum likelihood estimation} approach, we seek to find the map $S$ that maximises the expected log-likelihood of the observed data, which is mathematically equivalent to minimising the negative log-likelihood evaluated over the $n$ empirical particles~\cite{Baptista2022}. Averaging the negative of \eqref{eq:log_density_expanded} across all particles $x^{(i)}$ gives the empirical objective function:
-\begin{equation}
+Following a \emph{maximum likelihood estimation} approach, we seek to find the map $S$ that maximises the expected log-likelihood of the observed data, which is mathematically equivalent to minimising the negative log-likelihood evaluated over the $n$ empirical particles~\cite{Baptista2022}. Averaging across all particles $x^{(i)}$, and flipping signs, gives the empirical objective function:
+\begin{equation*}
     \min_{S} \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} \|S(x^{(i)})\|_{2}^2 - \sum_{k=1}^d \log \partial_k S^k(x^{(i)}) \right).
     \label{eq:full_negative_log_likelihood}
-\end{equation}
+\end{equation*}
 
-We write the squared $\ell_2$-norm explicitly as the sum of its squared components, $\|S(x)\|_{2}^2 = \sum_{k=1}^d (S^k(x))^2$. Substituting this into \eqref{eq:full_negative_log_likelihood} and rearranging the order of summation yields:
-\begin{equation}
-    \min_{S} \sum_{k=1}^d \left[ \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} (S^k(x^{(i)}))^2 - \log \partial_k S^k(x^{(i)}) \right) \right].
+We write the squared $\ell_2$-norm explicitly as the sum of its squared components, $\|S(x)\|_{2}^2 = \sum_{k=1}^D (S^k(x))^2$. Substituting and rearranging the order of summation yields:
+\begin{equation*}
+    \min_{S} \sum_{k=1}^D \left[ \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} (S^k(x^{(i)}))^2 - \log \partial_k S^k(x^{(i)}) \right) \right].
     \label{eq:decoupled_likelihood}
-\end{equation}
+\end{equation*}
 
-It is now evident that the objective function completely decouples. The terms associated with any specific map component $S^k$ do not depend on any other component $S^j$ for $j \neq k$. This property allows us to separate the computationally demanding high-dimensional optimisation problem into $d$ independent scalar estimation problems. For any given $k$-th dimension of the state space, the optimal map component is obtained by solving
+It is now evident that the objective function completely decouples. The terms associated with any specific map component $S^k$ do not depend on any other component $S^j$ for $j \neq k$. This property allows us to separate the computationally demanding high-dimensional optimisation problem into $D$ independent scalar estimation problems. For any given $k$-th dimension of the state space, the optimal map component is obtained by solving
 \begin{equation}
-    \min_{S^k \in \mathcal{S}_k} \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} (S^k(x^{(i)}))^2 - \log \partial_k S^k(x^{(i)}) \right).
+    \boxed{
+    \min_{S^k \in \mathcal{S}_k} \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} (S^k(x^{(i)}))^2 - \log \partial_k S^k(x^{(i)}) \right)
+    }.
     \label{eq:mle_objective}
 \end{equation}
-Here, $\mathcal{S}_k$ represents the infinite-dimensional hypothesis space of all functions that satisfy the strict monotonicity constraint defined in \eqref{eq:monotonicity_continuous}. 
+Here, $\mathcal{S}_k$ represents the infinite-dimensional hypothesis space of all functions that satisfy the monotonicity constraint defined in \eqref{eq:monotonicity_continuous}. 
 
-The objective function in \eqref{eq:mle_objective} balances two simultaneous demands. The quadratic term encourages the mapped particles to cluster near the origin, adopting the unit variance of the standard normal reference. Simultaneously, the logarithmic term severely penalises maps that compress the probability space towards zero, thereby preventing the formation of singular transformations. The formulation up to this point is continuous and infinite-dimensional; to apply numerical optimisation techniques such as projected gradient descent, we must parameterise $\mathcal{S}_k$ using a finite-dimensional polynomial basis.
+The objective function in \eqref{eq:mle_objective} balances two simultaneous demands. The quadratic term encourages the mapped particles to cluster near the origin, adopting the unit variance of the standard normal reference. Simultaneously, the logarithmic term severely penalises maps that compress the probability space towards zero, thereby preventing the formation of singular transformations. The formulation up to this point is continuous and infinite-dimensional; practically, to apply numerical optimisation techniques to learn the map, we must parameterise $\mathcal{S}_k$ using a finite-dimensional polynomial basis.

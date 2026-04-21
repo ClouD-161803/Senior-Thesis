@@ -1,39 +1,26 @@
 \section{Constrained optimisation formulation} \label{sec:constrained_optimisation}
 
-Having parameterised the scalar map component using a truncated Hermite polynomial basis, we can substitute the finite expansion \eqref{eq:hermite_expansion} and its linear derivative \eqref{eq:map_derivative_linear} directly into the continuous negative log-likelihood \eqref{eq:mle_objective}. For a specific $k$-th dimension of the state space, the density estimation task becomes a finite-dimensional optimisation problem over the unknown coefficient vector $w^{(k)} \in \mathbb{R}^{J_k+1}$. We define the resulting empirical objective function as
+We can substitute the finite expansion \eqref{eq:hermite_expansion} and its linear derivative \eqref{eq:map_derivative_linear} directly into the continuous negative log-likelihood \eqref{eq:mle_objective}. For a specific $k$-th dimension of the state space, the density estimation task becomes a finite-dimensional optimisation problem over the unknown coefficient vector $w^{(k)} \in \mathbb{R}^{J_k+1}$. We define the resulting empirical objective function as $f:\mathbb{R}^{J_k+1} \rightarrow \mathbb{R}$, mathematically given by
 \begin{equation}
     f(w^{(k)}) = \frac{1}{n} \sum_{i=1}^n \left( \frac{1}{2} \left( \sum_{j=0}^{J_k} w_j^{(k)} \Psi_j(x^{(i)}) \right)^2 - \log \left( \sum_{j=0}^{J_k} w_j^{(k)} \partial_k \Psi_j(x^{(i)}) \right) \right).
     \label{eq:finite_objective}
 \end{equation}
-Because the quadratic penalty is strictly convex and the negative logarithm is strictly convex over its positive domain, the composite objective function $f(w^{(k)})$ is strictly convex with respect to the decision variables $w^{(k)}$.
+Because the quadratic penalty is strictly convex and the negative logarithm is strictly convex over its positive domain, the composite objective function $f(\cdot)$ is strictly convex with respect to the decision variables $w^{(k)}$.
 
-To ensure the map remains a global diffeomorphism, we must formally impose the strict monotonicity constraint $\partial_k S^k(x) > 0$. Because we only possess empirical access to the target distribution via the $n$ discrete samples, we enforce this constraint exactly at every observed particle. Furthermore, to ensure numerical stability and rigorously avoid boundary cases that could momentarily fold the probability mass during the iterative learning process, we introduce a strictly positive tolerance parameter $\varepsilon > 0$. The monotonicity condition evaluated at an arbitrary particle $x^{(i)}$ therefore becomes
+To ensure the map remains a global diffeomorphism, we impose the monotonicity constraint~\eqref{eq:monotonicity_continuous}. Because we only possess empirical access to the target distribution via the $n$ discrete samples, we enforce this constraint exactly at every observed particle. Furthermore, to ensure numerical stability and avoid boundary cases that could momentarily fold the probability mass during the iterative learning process, we introduce a small positive monotonicity tolerance parameter $\varepsilon_m > 0$. The monotonicity condition evaluated at an arbitrary particle $x^{(i)}$ therefore becomes
 \begin{equation}
-    \sum_{j=0}^{J_k} w_j^{(k)} \partial_k \Psi_j(x^{(i)}) \ge \varepsilon.
+    \sum_{j=0}^{J_k} w_j^{(k)} \partial_k \Psi_j(x^{(i)}) \ge \varepsilon_m.
     \label{eq:discrete_monotonicity}
 \end{equation}
 
-By exploiting the linearity of the derivative operator across the polynomial basis, the condition in \eqref{eq:discrete_monotonicity} constitutes a purely linear inequality constraint on the decision variables. By evaluating these basis derivatives at every particle $x^{(i)}$ in the ensemble and stacking the results, we construct a dense constraint matrix $A \in \mathbb{R}^{n \times (J_k+1)}$. Each row of $A$ represents the gradient information evaluated at a single spatial location. We define a vector $\epsilon \in \mathbb{R}^n$ where every entry is equal to the small positive scalar $\varepsilon$. This transforms the $n$ distinct physical constraints into a unified matrix inequality:
-\begin{equation}
-    A w^{(k)} \ge \epsilon \quad \implies \quad -A w^{(k)} \le -\epsilon.
+By exploiting the linearity of the derivative operator across the polynomial basis, the condition in \eqref{eq:discrete_monotonicity} constitutes a purely linear inequality constraint on the decision variables. By evaluating these basis derivatives at every particle $x^{(i)}$ in the ensemble and stacking the results, we construct a dense constraint matrix $A \in \mathbb{R}^{n \times (J_k+1)}$. We define a vector $\epsilon_m \in \mathbb{R}^n$ where every entry is equal to the small positive scalar $\varepsilon_m$. This transforms the $n$ distinct physical constraints into a unified matrix inequality:
+\begin{equation*}
+    A w^{(k)} \ge \epsilon_m \quad \implies \quad -A w^{(k)} \le -\epsilon_m.
     \label{eq:matrix_inequality}
-\end{equation}
+\end{equation*}
 
-This system of linear inequalities strictly bounds the operational domain of our solver. Geometrically, each row of the matrix $-A$ defines a distinct closed half-space in the high-dimensional coefficient space. The feasible region for the optimal map coefficients is defined by the intersection of these $n$ half-spaces, forming a dense polyhedral set, which we denote as $\mathcal{C}$:
-\begin{equation}
-    \mathcal{C} = \left\{ w \in \mathbb{R}^{J_k+1} \mid -A w \le -\epsilon \right\}.
+Geometrically, each row of the matrix $-A$ defines a distinct closed half-space for a corresponding particle ${x^{(i)}}$ upon which the monotonicity constraint~\eqref{eq:discrete_monotonicity} is evaluated. The truncated Hermite polynomial degree $J_k+1$ is practically chosen high enough to model the effects of the physical distribution shift. For consistency with Chapter~\ref{ch:dykstra} and ease of notation, we will hereafter denote this degree as $d = J_k+1$ (not to be confused with $D$, the physical dimension of particles $\{x^{(i)}\}_{i=1}^n$). The feasible region for the optimal map coefficients is thus defined by the intersection of $n$ half-spaces, forming a dense polyhedral set, denoted as in Chapter~\ref{ch:dykstra} as:
+\begin{equation*}
+    \mathcal{H} = \left\{ w \in \mathbb{R}^{d} \mid -A w \le -\epsilon_m \right\}.
     \label{eq:polyhedral_set}
-\end{equation}
-
-Our overarching mathematical objective is to find the coefficient vector $w^{(k)}$ that minimises the unconstrained, strictly convex objective $f(w^{(k)})$ subject to the restriction that $w^{(k)} \in \mathcal{C}$. To navigate this constrained landscape, we implement a Projected Gradient Descent framework. In this approach, we compute the gradient of the objective and take an unconstrained descent step, resulting in an intermediate, unconstrained point which we shall denote $w^\circ$. 
-
-Because the unconstrained point $w^\circ$ will frequently violate the monotonicity conditions (i.e., $w^\circ \notin \mathcal{C}$), we must rigorously enforce the physical reality of the problem by projecting the point back onto the feasible polyhedral intersection. This projection must alter the learned coefficients as minimally as possible to retain the maximum likelihood data. Therefore, the projection operation requires us to find the unique point $w^\star \in \mathcal{C}$ that minimises the Euclidean distance to the unconstrained point $w^\circ$. Mathematically, this is equivalent to solving the following Constrained Quadratic Program (CQP):
-\begin{equation}
-\begin{array}{ll}
-    \displaystyle \minimise_{w \in \mathbb{R}^{J_k+1}} & \frac{1}{2}\|w - w^\circ\|_{\ell_2}^2 \\
-    \text{subject to} & -Aw \le -\epsilon.
-\end{array}
-\label{eq:cqp_projection}
-\end{equation}
-
-Solving this specific exact Euclidean projection problem forms the fundamental bridge between the optimal transport framework defined in this chapter and the accelerated projection algorithms derived previously. The robust numerical solution of \eqref{eq:cqp_projection} across tens of thousands of learning iterations is the computational engine of this thesis.
+\end{equation*}

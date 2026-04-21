@@ -1,41 +1,63 @@
 \section{Hermite polynomial parameterisation} \label{sec:hermite_basis}
 
-To solve the independent scalar estimation problems computationally, we must project the infinite-dimensional hypothesis space $\mathcal{S}_k$ into a finite-dimensional functional basis. The choice of basis is critical for the numerical stability of the optimisation routine. Utilising a standard monomial basis to expand the transport map yields severely ill-conditioned linear systems when evaluating expectations against a Gaussian measure, impairing the convergence of gradient-based solvers. Because our objective function inherently assumes the mapped particles follow a standard normal reference distribution, we construct the basis using probabilist's Hermite polynomials. These polynomials are orthogonal with respect to the standard normal probability density function, which smooths the optimisation landscape.
+To solve the independent scalar estimation problems computationally, we must project the infinite-dimensional hypothesis space $\mathcal{S}_k$ into a finite-dimensional functional basis. The choice of basis is critical for the numerical stability of the optimisation routine. Utilising a standard monomial basis to expand the transport map yields severely ill-conditioned linear systems when evaluating expectations against a Gaussian measure, impairing the convergence of gradient-based solvers~\cite{Baptista2022}. Because our objective function inherently assumes the mapped particles follow a standard normal reference distribution, we construct the basis using probabilist's Hermite polynomials. These polynomials are orthogonal with respect to the standard normal probability density function, which smooths the optimisation landscape.
 
-We define the sequence of univariate probabilist's Hermite polynomials, $\mathrm{He}_m(y)$ for a scalar input $y$ and degree $m$, via the recurrence relation:
-\begin{align}
+We define the sequence of univariate probabilist's Hermite polynomials, $\mathrm{He}_j(y)$ for a scalar input $y$ (dummy variable) and degree $j$, via the recurrence relation:
+\vspace{-1em}
+\begin{align*}
     \mathrm{He}_0(y) &= 1, \nonumber \\
     \mathrm{He}_1(y) &= y, \nonumber \\
-    \mathrm{He}_{m+1}(y) &= y \mathrm{He}_m(y) - m \mathrm{He}_{m-1}(y).
+    \mathrm{He}_{j+1}(y) &= y \mathrm{He}_j(y) - j \mathrm{He}_{j-1}(y).
     \label{eq:hermite_recurrence}
-\end{align}
-
+\end{align*}
+\vspace{-3em}
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{figures/Hermite.pdf}
+    \includegraphics[width=0.98\linewidth]{figures/Hermite.pdf}
     \caption{The first five Hermite polynomials evaluated over the real line.}
     \label{fig:hermite_polynomials}
 \end{figure}
 
-As illustrated in Figure~\ref{fig:hermite_polynomials}, the polynomials exhibit structural zero-crossings and growth rates that are well-suited for capturing the variations of a probability density. To parameterise the full multivariate transport map, we require multivariate basis functions. For the $k$-th component of the map, the function depends strictly on the first $k$ spatial coordinates, $x_1, \dots, x_k$, to enforce the lower-triangular structure of the Knothe-Rosenblatt rearrangement. We construct multivariate basis functions, $\Psi_j(x)$, by taking the tensor product of the univariate Hermite polynomials across these $k$ active dimensions. 
+The first five of these polynomials are illustrated in Figure~\ref{fig:hermite_polynomials}. The polynomials exhibit structural zero-crossings and growth rates that are well-suited for capturing the variations of a probability density~\cite{Baptista2022}. To parameterise the full multivariate transport map, we require multivariate basis functions. For the $k$-th component of the map, the function depends strictly on the first $k$ spatial coordinates, $x_1, \dots, x_k$, to enforce the lower-triangular structure of the KR rearrangement.
 
-A full tensor product basis up to a maximum polynomial degree $D$ contains $(D+1)^k$ terms. For high-dimensional state spaces encountered in aerospace tracking problems, this exponential growth in decision variables renders the parameterisation computationally intractable. To alleviate this dimensionality issue, we enforce a priori mathematical sparsity through total degree truncation. We construct a filtered index set where a tensor product term is only retained if the sum of its univariate polynomial degrees is less than or equal to $D$. This truncation strategy limits the size of the basis while preserving the expressivity required to invert the physical nonlinear shears of the target distribution.
+We construct multivariate basis functions $\Psi_j : \mathbb{R}^k \rightarrow \mathbb{R}$, by taking the \emph{tensor product} of the univariate Hermite polynomials across these $k$ active dimensions. We define a multi-index $\alpha^{j} = (\alpha_1^{(j)}, \dots, \alpha_k^{(j)}) \in \mathbb{N}_0^k$, where $\mathbb{N}_0^k$ denotes the set of all $k$-dimensional tuples of non-negative integers, and each integer component $\alpha_m^{(j)}$ dictates the polynomial degree applied to the $m$-th spatial coordinate. The $j$-th multivariate basis function is then constructed as the product of the univariate evaluations:
+\begin{equation*}
+    \Psi_j(x) = \prod_{m=1}^k \mathrm{He}_{\alpha_m^{(j)}}(x_m).
+    \label{eq:tensor_product_basis}
+\end{equation*}
 
-We denote the number of retained basis functions for the $k$-th map component as $J_k + 1$. We approximate the scalar map component using a linear combination of these basis functions:
+\subsection{Total degree truncation} \label{subsec:total_defree truncation}
+
+A full tensor product basis up to a maximum polynomial degree $P$ contains $(P+1)^k$ terms~\cite{Baptista2022}. For high-dimensional state spaces, this exponential growth in decision variables can render the parameterisation computationally burdensome. To alleviate this issue, we enforce \emph{a priori} mathematical sparsity through total degree truncation. We construct a filtered index set where a tensor product term is only retained if the sum of its univariate polynomial degrees is less than or equal to $P$:
+\begin{equation*}
+    \sum_{m=1}^k \alpha_m^{(j)} \le P.
+    \label{eq:total_degree_truncation}
+\end{equation*}
+This truncation strategy limits the size of the basis while preserving the expressivity required to invert the physical nonlinear shears of the target distribution.
+
+We denote the number of retained basis functions for the $k$-th map component as $J_k + 1 \in \mathbb{N}$. By combinatorial design, following a classical ``stars and bars'' construction, the number of integer multi-indices satisfying this condition evaluates to the binomial coefficient. Consequently, the total number of retained basis functions for the $k$-th map component is given by
+
+\begin{equation*}
+    J_k + 1 = \binom{P + k}{k} = \frac{(P+k)!}{P!k!},
+\end{equation*}
+
+substantially reducing the dimensionality of the coefficient space compared to a full tensor product. As a practical example, when mapping the sixth spatial dimension ($k=6$) corresponding to an equinoctial state space with a maximum total degree of $P=4$, the total number of retained polynomial coefficients evaluates to $J_6 + 1 = \binom{4 + 6}{6} = \frac{10!}{4! \, 6!} = 210$. Without total degree truncation, a full tensor product basis would have required $(P+1)^k = 5^6 = 15,625$ terms. In practice, the effects of physical shearing in most engineering distributions are predominantly captured by lower-order couplings. The complex, high-degree tensor products discarded by the truncation typically carry negligible physical significance and predominantly contribute to numerical noise and over-parameterisation~\cite{Baptista2022}. Consequently, total degree truncation not only ensures computational tractability but also enforces a necessary, physically motivated sparsity upon the hypothesis space.
+
+\subsection{Approximating the map} \label{subsec:hermite_map_approximation}
+
+Armed with the truncated multivariate Hermite basis functions $\Psi_j$, the scalar map component can be approximated as:
 \begin{equation}
     S^k(x) = \sum_{j=0}^{J_k} w_j^{(k)} \Psi_j(x),
     \label{eq:hermite_expansion}
 \end{equation}
-where the vector $w^{(k)} \in \mathbb{R}^{J_k+1}$ contains the unknown scalar coefficients that we must optimise. 
-
-A direct mathematical advantage of this specific parameterisation emerges when evaluating the strict monotonicity constraint, $\partial_k S^k(x) > 0$. The derivative of a probabilist's Hermite polynomial obeys the linear relation:
-\begin{equation}
-    \frac{d}{dy} \mathrm{He}_m(y) = m \mathrm{He}_{m-1}(y).
+where the vector $w^{(k)} \in \mathbb{R}^{J_k+1}$ contains the unknown scalar coefficients that we must optimise. A direct mathematical advantage of the Hermite parameterisation emerges when evaluating the monotonicity constraint~\eqref{eq:monotonicity_continuous}. The derivative of a probabilist's Hermite polynomial obeys the linear relation:
+\begin{equation*}
+    \frac{d}{dy} \mathrm{He}_j(y) = j \mathrm{He}_{j-1}(y).
     \label{eq:hermite_derivative}
-\end{equation}
+\end{equation*}
 Because $\Psi_j(x)$ is a tensor product, the partial derivative $\partial_k$ only operates on the univariate polynomial associated with the $k$-th spatial coordinate, $x_k$. Consequently, the partial derivative of the map component reduces to a linear combination of lower-degree Hermite polynomials, evaluated strictly with respect to the decision variables $w^{(k)}$:
 \begin{equation}
     \partial_k S^k(x) = \sum_{j=0}^{J_k} w_j^{(k)} \partial_k \Psi_j(x).
     \label{eq:map_derivative_linear}
 \end{equation}
-Substituting the finite expansion \eqref{eq:hermite_expansion} and its linear derivative \eqref{eq:map_derivative_linear} into the infinite-dimensional continuous objective \eqref{eq:mle_objective} reformulates the density estimation task as a finite-dimensional optimisation problem.
+With this parametrisation, we are ready to reformulate the density estimation task as a finite-dimensional optimisation problem.
