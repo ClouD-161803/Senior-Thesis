@@ -1,4 +1,4 @@
-\section{Optimal transport and the Knothe-Rosenblatt rearrangement}
+\section{The Knothe-Rosenblatt rearrangement}
 \label{sec:optimal_transport_kr}
 
 The fundamental goal of optimal transport is to construct a deterministic coupling between two probability measures. We denote a continuous state space as $\mathcal{X} \subseteq \mathbb{R}^d$. We consider a target probability measure, which is often a complex and non-Gaussian distribution arising from nonlinear physical dynamics. In practice, this target distribution is analytically intractable to evaluate directly. Instead, we assume access to a discrete ensemble of $n$ samples, or particles, denoted by $\{x^{(1)}, \dots, x^{(n)}\} \subset \mathcal{X}$, drawn from this target distribution. 
@@ -9,79 +9,119 @@ Our overarching objective is to identify a deterministic transport map $S: \math
     \centering
     \begin{tikzpicture}[
         >=Stealth,
-        particle/.style={circle, fill=black!70, inner sep=1.2pt},
-        mapped_particle/.style={circle, fill=blue!70, inner sep=1.2pt},
+        particle/.style={circle, fill=black!80, inner sep=1.2pt},
+        mapped_particle/.style={circle, fill=black!80, inner sep=1.2pt},
         axis/.style={->, gray, thick},
-        curve/.style={thick, draw=black!80, fill=black!5}
+        contour1/.style={fill=blue!10, draw=blue!20, thick},
+        contour2/.style={fill=blue!20, draw=blue!30, thick},
+        contour3/.style={fill=blue!30, draw=blue!40, thick},
+        contour4/.style={fill=blue!40, draw=blue!50, thick}
     ]
 
         % ----------------------------------------------------
-        % LEFT SIDE: Target Distribution (Complex, Non-Gaussian)
+        % LEFT PANEL: Target Measure (Exact Parametric Shear)
         % ----------------------------------------------------
         \begin{scope}[shift={(0,0)}]
             % Axes
             \draw[axis] (-2.5, 0) -- (2.5, 0) node[right, text=black] {$x_1$};
-            \draw[axis] (0, -1.5) -- (0, 3) node[above, text=black] {$x_2$};
+            \draw[axis] (0, -3.1) -- (0, 3.0) node[above, text=black] {$x_2$};
             
-            % Complex Boomerang / Sheared Distribution Shape
-            \draw[curve] 
-                (-1.8, 2.5) .. controls (-1.5, 0.5) and (-0.5, -0.5) .. 
-                (0, -0.8) .. controls (0.5, -0.5) and (1.5, 0.5) .. 
-                (1.8, 2.5) .. controls (1.2, 1.8) and (0.5, 0.2) .. 
-                (0, 0) .. controls (-0.5, 0.2) and (-1.2, 1.8) .. 
-                cycle;
+            % Exact Mathematical Contours: x_1 = c*cos(t), x_2 = c*sin(t) + 0.4*c^2*cos^2(t) - 0.5
+            % Level 1 (Outer, c = 2.4)
+            \draw[contour1] plot[domain=0:360, samples=100, smooth cycle] 
+                ({2.4*cos(\x)}, {2.4*sin(\x) + 2.304*cos(\x)*cos(\x) - 0.5});
+                
+            % Level 2 (c = 1.8)
+            \draw[contour2] plot[domain=0:360, samples=100, smooth cycle] 
+                ({1.8*cos(\x)}, {1.8*sin(\x) + 1.296*cos(\x)*cos(\x) - 0.5});
+                
+            % Level 3 (c = 1.1)
+            \draw[contour3] plot[domain=0:360, samples=100, smooth cycle] 
+                ({1.1*cos(\x)}, {1.1*sin(\x) + 0.484*cos(\x)*cos(\x) - 0.5});
+                
+            % Level 4 (Inner Core, c = 0.5)
+            \draw[contour4] plot[domain=0:360, samples=100, smooth cycle] 
+                ({0.5*cos(\x)}, {0.5*sin(\x) + 0.100*cos(\x)*cos(\x) - 0.5});
             
-            % Scatter Particles (x_i)
-            \node[particle, fill=red!80] at (-1.4, 2.0) {};
-            \node[particle, fill=orange!80] at (-1.0, 1.2) {};
-            \node[particle, fill=yellow!80!black] at (-0.6, 0.6) {};
-            \node[particle, fill=green!80!black] at (-0.2, -0.2) {};
-            \node[particle, fill=cyan!80!black] at (0, -0.5) {};
-            \node[particle, fill=blue!80] at (0.2, -0.2) {};
-            \node[particle, fill=purple!80] at (0.6, 0.6) {};
-            \node[particle, fill=magenta!80] at (1.0, 1.2) {};
-            \node[particle, fill=pink!80!black] at (1.4, 2.0) {};
+            % Exact Transformed Empirical Ensemble Scatter
+            \node[particle] at (0.1, -0.3) {};
+            \node[particle] at (-0.3, -0.36) {};
+            \node[particle] at (0.2, -0.88) {};
+            \node[particle] at (-0.5, 0.3) {};
+            \node[particle] at (0.6, 0.44) {};
+            \node[particle] at (0.9, -0.48) {};
+            \node[particle] at (-0.8, -0.84) {};
+            \node[particle] at (-1.1, 0.98) {};
+            \node[particle] at (0.4, 0.96) {};
+            \node[particle] at (-1.4, -0.52) {};
+            \node[particle] at (1.5, -0.8) {};
+            \node[particle] at (0.8, -1.84) {};
+            \node[particle] at (-1.7, 1.06) {};
+            \node[particle] at (1.8, 1.9) {};
+            \node[particle] at (-0.6, -2.26) {};
+            \node[particle] at (2.0, 0.9) {};
+            \node[particle] at (-2.1, 0.16) {};
+            \node[particle] at (0.2, 1.72) {};
+            \node[particle] at (-1.0, 1.9) {};
+
+            % Explicit Sample Notation
+            \node[particle] (xi) at (1.2, 0.58) {};
+            \node[right=2pt] at (xi) {$x^{(i)}$};
             
-            % Label
-            \node at (0, -1.6) {Target measure, $p(x)$};
+            % Sub-caption
+            \node[below=0.8cm of {(0,-3.0)}] {Target measure, $p(x)$};
         \end{scope}
 
         % ----------------------------------------------------
-        % TRANSPORT MAP ARROW
+        % CENTRAL MAP OPERATOR
         % ----------------------------------------------------
-        % The map pushes the complex target TO the standard normal reference
-        \draw[->, very thick, color=blue!80] (2.8, 1) to[bend left=10] node[midway, above, text=black] {$S(x)$} (5.2, 1);
+        \draw[->, line width=1.5pt, color=black!80] (3.0, 0.75) -- (5.0, 0.75) node[midway, above, text=black] {$S^i(x)$};
 
         % ----------------------------------------------------
-        % RIGHT SIDE: Reference Distribution (Standard Normal)
+        % RIGHT PANEL: Reference Measure (Standard Normal)
         % ----------------------------------------------------
-        \begin{scope}[shift={(8,0)}]
+        \begin{scope}[shift={(8.0, 0.0)}]
             % Axes
-            \draw[axis] (-2.5, 0) -- (2.5, 0) node[right, text=black] {$z_1$};
-            \draw[axis] (0, -2.5) -- (0, 2.5) node[above, text=black] {$z_2$};
+            \draw[axis] (-3.0, 0) -- (3.0, 0) node[right, text=black] {$z_1$};
+            \draw[axis] (0, -3.1) -- (0, 3.0) node[above, text=black] {$z_2$};
             
-            % Standard Normal Contours (Circular)
-            \draw[thick, draw=blue!80, fill=blue!5] (0,0) circle (1.8);
-            \draw[thick, draw=blue!80, fill=blue!10] (0,0) circle (1.2);
-            \draw[thick, draw=blue!80, fill=blue!20] (0,0) circle (0.6);
+            % Smooth, Nested Gradient Contours (Isotropic)
+            \draw[contour1] (0,0) circle (2.4);
+            \draw[contour2] (0,0) circle (1.8);
+            \draw[contour3] (0,0) circle (1.1);
+            \draw[contour4] (0,0) circle (0.5);
             
-            % Scatter Mapped Particles (S(x_i))
-            \node[mapped_particle, fill=red!80] at (-1.2, 0.5) {};
-            \node[mapped_particle, fill=orange!80] at (-0.8, -0.2) {};
-            \node[mapped_particle, fill=yellow!80!black] at (-0.4, 0.8) {};
-            \node[mapped_particle, fill=green!80!black] at (-0.1, -0.6) {};
-            \node[mapped_particle, fill=cyan!80!black] at (0, 0.1) {};
-            \node[mapped_particle, fill=blue!80] at (0.2, 0.6) {};
-            \node[mapped_particle, fill=purple!80] at (0.5, -0.4) {};
-            \node[mapped_particle, fill=magenta!80] at (0.9, 0.3) {};
-            \node[mapped_particle, fill=pink!80!black] at (1.3, -0.2) {};
+            % Exact Isotropic Mapped Scatter
+            \node[mapped_particle] at (0.1, 0.2) {};
+            \node[mapped_particle] at (-0.3, 0.1) {};
+            \node[mapped_particle] at (0.2, -0.4) {};
+            \node[mapped_particle] at (-0.5, 0.7) {};
+            \node[mapped_particle] at (0.6, 0.8) {};
+            \node[mapped_particle] at (0.9, -0.3) {};
+            \node[mapped_particle] at (-0.8, -0.6) {};
+            \node[mapped_particle] at (-1.1, 1.0) {};
+            \node[mapped_particle] at (0.4, 1.4) {};
+            \node[mapped_particle] at (-1.4, -0.8) {};
+            \node[mapped_particle] at (1.5, -1.2) {};
+            \node[mapped_particle] at (0.8, -1.6) {};
+            \node[mapped_particle] at (-1.7, 0.4) {};
+            \node[mapped_particle] at (1.8, 1.1) {};
+            \node[mapped_particle] at (-0.6, -1.9) {};
+            \node[mapped_particle] at (2.0, -0.2) {};
+            \node[mapped_particle] at (-2.1, -1.1) {};
+            \node[mapped_particle] at (0.2, 2.2) {};
+            \node[mapped_particle] at (-1.0, 2.0) {};
+
+            % Explicit Sample Notation
+            \node[mapped_particle] (zi) at (1.2, 0.5) {};
+            \node[right=2pt] at (zi) {$z^{(i)}$};
             
-            % Label
-            \node at (0, -3.1) {Reference measure, $\eta(z)$};
+            % Sub-caption
+            \node[below=0.8cm of {(0,-3.0)}] {Reference measure, $\eta(z)$};
         \end{scope}
 
     \end{tikzpicture}
-    \caption{A two-dimensional schematic illustrating optimal transport via a deterministic Knothe-Rosenblatt map. The map $S$ pushes the highly nonlinear, non-Gaussian target distribution of empirical particles (left) forward to a simple, symmetric standard normal reference distribution (right).}
+    \caption{A schematic illustrating optimal transport via a deterministic map $S$ pushing a sheared target measure forward to a standard normal reference.}
     \label{fig:optimal_transport_schematic}
 \end{figure}
 
