@@ -1,0 +1,36 @@
+# LaTeX generated files
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fdb_latexmk
+*.fls
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.nav
+*.out
+*.run.xml
+*.snm
+*.toc
+*-blx.bib
+*.synctex.gz
+*.pdfsync
+
+# Only ignore the root PDF if you don't want to track compiled documents
+*.pdf
+
+# Editor/IDE specific
+.vscode/
+*.swp
+*~
+
+# TeXra
+texra-sample/
