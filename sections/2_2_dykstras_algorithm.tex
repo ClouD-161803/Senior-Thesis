@@ -33,7 +33,8 @@ By systematically storing the outward normal of the projection step, Dykstra's a
 
 In fact, by adding these auxiliary vectors back into the primary variables before subsequent projections, the Boyle-Dykstra theorem~\cite{DYKSTRA,DYKSTRAPERKINS} implies asymptotic convergence to the true projection, guaranteeing that \[\lim_{m\rightarrow\infty}\twonorm{w^{(m)}-\mathcal{P}_\mathcal{H}(w^\circ)}=0.\]
 
-For the specific case of polyhedral sets defined in~\eqref{eq:halfspaces_i}, the projection step~\eqref{eq:dykstra:proj} of Dykstra's method can be greatly simplified. If the augmented point $(w^{(m)} + e^{(m-n)})$ already satisfies the current constraint $\mathcal{H}_{[m]}$, no action is required and the point remains unchanged. If it violates the constraint, it is orthogonally projected onto the boundary hyperplane. This simplifies the projection update to:
+For the specific case of polyhedral sets defined in~\eqref{eq:halfspaces_i}, the projection step \eqref{eq:dykstra:proj} of Dykstra's method can be greatly simplified. If the augmented point $(w^{(m)} + e^{(m-n)})$ already satisfies the current constraint $\mathcal{H}_{[m]}$, no action is required and the point remains unchanged. If it violates the constraint, it is orthogonally projected onto the boundary hyperplane. This simplifies the projection update to:
+
 \begin{align}\label{eq:dykstra:proj:poly}
 w^{(m+1)}=
 \begin{cases}
@@ -49,6 +50,7 @@ e^{(m)}=
 e^{(m-n)}+\left((w^{(m)})^T a_{[m]} - b_{[m]}\right) a_{[m]} & \text{otherwise}
 \end{cases}.
 \end{align}
+
 Because these updates rely purely on vector additions and scalar projections rather than matrix operations, Dykstra's method presents a computationally inexpensive per-iteration overhead. The auxiliary vector $e^{(m)}$ is either zero or parallel to the half-space normal $a_{[m]}$, so it can be characterised via a scalar quantity $k^{(m)} \in \mathbb{R}$ as $e^{(m)} = k^{(m)} a_{[m]}$ with 
 \begin{align}\label{eq:km}
 k^{(m)} = 
@@ -66,7 +68,7 @@ where $w^{(\infty)} \eqdef \lim_{m \rightarrow \infty} w^{(m)}$.
 
 It can be shown that there exists an integer $N_1$ such that when $[m] \in \mathcal{B}$ at iteration $m \geq N_1$, it follows that $w^{(m)} = w^{(m-1)}$ and $e^{(m)} = 0$. This indicates that the half-spaces that become inactive remain so permanently~\cite[Lemma~3.1]{DYKSTRAPOLY}. Furthermore, there exists an integer $N_2 \geq N_1$ such that whenever $m \geq N_2$, it holds that $\twonorm{w^{(m+n)} - w^{(\infty)}} \leq \alpha_{[m]} \twonorm{w^{(m)} - w^{(\infty)}}$, where $0 \leq \alpha_{[m]} < 1$ are scalars related to the geometric angles between the half-spaces~\cite[Lemma~3.7]{DYKSTRAPOLY}. The integer $N_2$ describes the iteration from which the algorithm has definitively identified the inactive half-spaces. 
 
-It then follows that there exist constants $0 \leq c < 1$ and $\rho > 0$ such that $\twonorm{w^{(m)} - w^{(\infty)}} \leq \rho\, c^m$~\cite[Thm.~3.8]{DYKSTRAPOLY}. The convergence rate constant $c$ can be estimated from the smallest $\alpha_{[m]}$, which is fundamentally characterised by the angles between the subspaces formed by the active half-spaces. The scaling constant $\rho$, however, depends on an unknown iteration $N_3 \geq N_2$ and on the initial unconstrained point $w^\circ$. Consequently, it cannot be computed in advance~\cite{DYKSTRAPERKINS,XUPOLY}.
+It then follows that there exist constants $0 \leq c < 1$ and $\rho > 0$ such that \newline $\twonorm{w^{(m)} - w^{(\infty)}} \leq \rho\, c^m$~\cite[Thm.~3.8]{DYKSTRAPOLY}. The convergence rate constant $c$ can be estimated from the smallest $\alpha_{[m]}$, which is fundamentally characterised by the angles between the subspaces formed by the active half-spaces. The scaling constant $\rho$, however, depends on an unknown iteration $N_3 \geq N_2$ and on the initial unconstrained point $w^\circ$. Consequently, it cannot be computed in advance~\cite{DYKSTRAPERKINS,XUPOLY}.
 
 % In the case of stalling, the variable $\rho$ can become arbitrarily large, making the application of Dykstra's method difficult in practice. The authors of~\cite{DYKSTRAPERKINS} proposed a combined Dysktra-conjugate-gradient method that allows for computing an upper bound on $\anynorm{x_m -x_\infty}$. The authors of~\cite{XUPOLY} proposed an alternative algorithm called \emph{successive approximate algorithm}, which promises fast convergence, conditioned on knowing a point $x\in\mathcal{H}$ in advance.
 

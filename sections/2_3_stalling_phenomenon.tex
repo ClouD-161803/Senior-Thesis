@@ -9,11 +9,11 @@ Despite its strong theoretical convergence guarantees (Boyle-Dykstra Theorem) an
     \label{fig:stalling_regions}
 \end{figure}
 
-To understand the mechanics of this stalling effect, we examine a foundational geometric example provided by Bauschke et al.~\cite{DYKSTRASTALLING}. The authors analyse the behaviour of Dykstra's method for a simple polyhedral set in $\mathbb{R}^2$, defined by the intersection of a unit box and a line. They establish that the convergence behaviour of the algorithm is entirely dictated by the spatial location of the initial unconstrained point $w^\circ$. By evaluating different starting conditions, the state space can be partitioned into three distinct regions yielding fundamentally different convergence properties:
+To understand the mechanics of this stalling effect, we examine a foundational geometric example provided by Bauschke et al.~\cite{DYKSTRASTALLING}. The authors analyse the behaviour of Dykstra's method for a simple polyhedral set in $\mathbb{R}^2$, defined by the intersection of a unit box and a line. They establish that the convergence behaviour of the algorithm is entirely dictated by the spatial location of the initial unconstrained point $w^\circ$. By evaluating different starting conditions, the state space can be partitioned into three distinct regions, yielding fundamentally different convergence properties:
 \begin{enumerate}
-    \item \textbf{Finite convergence:} The algorithm identifies the true projection $w^\star$ in a finite number of cycles.
-    \item \textbf{Infinite convergence:} The iterates approach $w^\star$ asymptotically without stalling.
-    \item \textbf{Stalling followed by infinite convergence:} The iterates become trapped in a static cycle for a finite duration before breaking free and converging asymptotically.
+    \item Finite convergence: The algorithm identifies the true projection $w^\star$ in a finite number of cycles.
+    \item Infinite convergence: The iterates approach $w^\star$ asymptotically without stalling.
+    \item Stalling followed by infinite convergence: The iterates become trapped in a static cycle for a finite duration before breaking free and converging asymptotically.
 \end{enumerate}
 
 These three starting domains are visualised in Figure~\ref{fig:stalling_regions} as the green, blue, and red regions, respectively.
