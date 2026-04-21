@@ -54,6 +54,7 @@
 \usepackage{tabto}
 \usepackage{siunitx}
 \usepackage{nth}
+\usepackage{booktabs}
 
 %-------------------------------------------------------------
 % 6. ALGORITHMS & PSEUDOCODE
@@ -83,6 +84,7 @@
 %-------------------------------------------------------------
 % 8. UTILITY & CLASS FILE MODIFICATIONS
 %-------------------------------------------------------------
+\setlength{\marginparwidth}{2cm}
 \usepackage{todonotes}
 
 %-------------------------------------------------------------
@@ -92,7 +94,7 @@
 \newcommand{\Argmax}{\ensuremath{\mathop{\mathrm{argmax}}}}
 \newcommand{\twonorm}[1]{\left\| #1 \right\|_2}
 \newcommand{\set}[2]{\left\{ #1 \;\middle|\; #2 \right\}}
-\newcommand{\Rset}{\mathcal{R}}
+\newcommand{\Rset}{\mathbb{R}}
 \newcommand{\inR}[3]{#1 \in \Rset^{#2 \times #3}}
 \newcommand{\trans}[1]{#1^\top} % we do not use this, ^T instead
 

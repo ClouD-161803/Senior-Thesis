@@ -1,65 +1,33 @@
 \section{A closed-form solution for the stalling period} \label{sec:closed_form_solution}
 
-% Based on the discussion of stalling in~\cite{DYKSTRASTALLING}, we identify as a necessary condition for stalling of the iterates for successive iteration cycles over $n$ sets. This is formalised in Definition~\ref{def:stalling}.
-Based on the discussion in~\cite{DYKSTRASTALLING}, we define stalling as follows.
+As established in Section~\ref{sec:stalling_phenomenon}, the stalling phenomenon is fundamentally characterised by a strict periodicity in the primary iterates and a corresponding linear accumulation within the auxiliary error variables. Based on the geometric observations discussed in~\cite{DYKSTRASTALLING}, we can mathematically formalise the onset of this stalling phase.
 
 \begin{definition}[Stalling]\label{def:stalling}
-Given $m\geq n-1$, a stalling period is defined as those $i\in\lbrace 0,\dots,m_\text{stall}\rbrace$ with $m_\text{stall}\geq n$ for which $x_{m+i}=x_{m+i-n}$.
+Given an iteration index $m \geq n-1$, a stalling period is defined as a sequence of iterations $i \in \{0,\dots,m_\text{stall}\}$ with $m_\text{stall} \geq n$ for which the primary iterates exhibit strict cyclical repetition, such that $w^{(m+i)} = w^{(m+i-n)}$.
 \end{definition}
 
-During stalling, the primary variables $x_{m+i}$ remain constant, and only the auxiliary variables $e_{m+i}$ change: these are modified by constant increments $x_m-x_{m+1}$. The stalling period therefore continues until the auxiliary variable $e_{m+i}$ becomes such that $x_{m+i}+e_{m-n+i}\in\mathcal{H}_{[m+i]}$ for some $[m]$, i.e. the half-space associated with stalling becomes inactive. For polyhedral sets, the length of the stalling period can be pre-computed as soon as the algorithm encounters stalling, using the half-spaces that are active at this iteration. The stalling period continues until one of these half-spaces becomes inactive, at which point stalling terminates. This is formalised in Theorem~\ref{thm:nstall}.
+During a defined stalling period, the spatial coordinates of the primary variables $w^{(m+i)}$ remain constant across successive cycles. Consequently, only the auxiliary variables $e^{(m+i)}$ experience modification. As dictated by the update rule, these auxiliary variables are adjusted at each cycle by constant corrective increments $w^{(m)} - w^{(m+1)}$. 
+
+The stalling period will therefore strictly continue until the cumulative magnitude of the auxiliary variable $e^{(m+i)}$ becomes sufficiently large to satisfy \[w^{(m+i)} + e^{(m-n+i)} \in \mathcal{H}_{[m+i]}\] for a given constraint $[m]$. Geometrically, this indicates that the specific half-space associated with the stall transitions from an active state to an inactive state. For polyhedral sets, because the auxiliary accumulation is strictly linear, the exact length of the stalling period can be deterministically pre-computed as soon as the algorithm detects the stalling condition. This computation relies exclusively on the active constraints at the onset of the stall and is formalised in Theorem~\ref{thm:nstall}.
 
 \begin{theorem}[Length of Stalling Period]\label{thm:nstall}
-Suppose that stalling starts at iteration $m$ as in Definition~\ref{def:stalling} and denote the active half-spaces by $\mathcal{A}\coloneqq\set{i\in\lbrace 0,\dots,n-1\rbrace}{x_{m+i}+e_{m-n+i}\not\in\mathcal{H}_{[m+i]}}$. The length of the stalling period is
+Suppose that stalling commences at iteration $m$ as outlined in Definition~\ref{def:stalling}. Let the active half-spaces be denoted by the set $\mathcal{A} \coloneqq \{i \in \{0,\dots,n-1\} \mid w^{(m+i)} + e^{(m-n+i)} \notin \mathcal{H}_{[m+i]}\}$. The total length of the stalling period is given by:
 \begin{align}\label{eq:nstall}
-    N_\text{stall}\coloneqq\min_{i\in\mathcal{S}} \left\lceil \frac{k_{m-n+i}}{b_{[m+i]}-x_{m+i}^T a_{[m+i]}}\right\rceil,
+    N_\mathrm{stall} \coloneqq \min_{i \in \mathcal{S}} \left\lceil \frac{k^{(m-n+i)}}{b_{[m+i]} - (w^{(m+i)})^T a_{[m+i]}}\right\rceil,
 \end{align}
-where $\lceil\cdot\rceil$ is the ceiling operator, $k_{m-n+i}=e_{m-n+i}^T a_{[m+i]}$, and $\mathcal{S}\coloneqq\set{i\in \mathcal{A}}{x_{m-n+i}^T a_{[m+i]} - b_{[m+i]} < 0}$.
+where $\lceil \cdot \rceil$ represents the ceiling operator, $k^{(m-n+i)} = (e^{(m-n+i)})^T a_{[m+i]}$, and the candidate set $\mathcal{S}$ is defined as $\mathcal{S} \coloneqq \{i \in \mathcal{A} \mid (w^{(m-n+i)})^T a_{[m+i]} - b_{[m+i]} < 0\}$.
 \end{theorem}
 
 \begin{proof}
-Note that the existence of a finite number $N_\text{stall}$ is a consequence of the Boyle-Dykstra theorem. Following the condition in~\eqref{eq:dykstra:proj:poly}, the stalling period will terminate once an active half-space becomes inactive, which we can express as $x_{m+i}+e_{m-n+i}\in\mathcal{H}_{[m+i]}$ for some half-space index $i\geq n$ (Definition~\ref{def:stalling}). As a consequence of the scalar update in~\eqref{eq:km}, the only half-spaces that can become inactive are those for which the quantity $x_{m+i}^T a_{[m+i]} - b_{[m+i]}$ is negative. By Definition~\ref{def:stalling}, this quantity is constant during stalling. The length of the stalling period can therefore be obtained from choosing the smallest possible integer $N_i$ for which
+The existence of a finite integer $N_\text{stall}$ is a direct consequence of the asymptotic convergence guaranteed by the Boyle-Dykstra theorem. Following the conditional logic in the simplified polyhedral projection step~\eqref{eq:dykstra:proj:poly}, the stalling period will strictly terminate once an active half-space becomes inactive. This transition is mathematically expressed as $w^{(m+i)} + e^{(m-n+i)} \in \mathcal{H}_{[m+i]}$ for some half-space index $i \geq n$ under Definition~\ref{def:stalling}. 
+
+As a direct consequence of the scalar update rule detailed in~\eqref{eq:km}, the only half-spaces capable of transitioning to an inactive state are those for which the spatial evaluation quantity $(w^{(m+i)})^T a_{[m+i]} - b_{[m+i]}$ is strictly negative. By Definition~\ref{def:stalling}, because the primary iterates are ``frozen'' in space, this quantity remains constant throughout the stalling duration. 
+
+The requisite number of cycles to break the stall for any single half-space can therefore be obtained by determining the smallest possible integer $N_i$ that satisfies the inequality:
 \begin{align*}
-k_{m-n+i}+N_i\left(x_{m+i}^T a_{[m+i]} - b_{[m+i]}\right) < 0,\qquad i\in\mathcal{A},
+k^{(m-n+i)} + N_i \left((w^{(m+i)})^T a_{[m+i]} - b_{[m+i]}\right) < 0, \qquad i \in \mathcal{A}.
 \end{align*}
-so that $N_i=\left\lceil k_{m-n+i} / \left(b_{[m+i]}-x_{m+i}^T a_{[m+i]}\right)\right\rceil$, $N_\text{stall}=\min_{i\in\mathcal{S}}N_i$, and $i_\text{stall}=\Argmin_{i\in\mathcal{S}} N_i$. If multiple $i_1<\dots<i_j$ are such that $N_{i_1}=\dots = N_{i_j}$, then according to~\eqref{eq:dykstra}, half-space at index $i_\text{stall}:= i_1$ is discarded first.
+Solving this inequality for $N_i$ yields $N_i = \left\lceil k^{(m-n+i)} / \left(b_{[m+i]} - (w^{(m+i)})^T a_{[m+i]}\right)\right\rceil$. The global duration of the stalling period is subsequently the minimum across all candidate half-spaces, establishing $N_\text{stall} = \min_{i \in \mathcal{S}} N_i$. The specific half-space that triggers the termination is indexed by $i_\text{stall} = \text{argmin}_{i \in \mathcal{S}} N_i$. If multiple indices $i_1 < \dots < i_j$ yield identical values such that $N_{i_1} = \dots = N_{i_j}$, the sequential update structure of Dykstra's algorithm defined in~\eqref{eq:dykstra} ensures that the half-space evaluated earliest in the sequence, $i_\text{stall} \coloneqq i_1$, is discarded first.
 \end{proof}
-Note that $N_\text{stall}$ in Theorem~\ref{thm:nstall} refers to the number of $n$-step cycles of~\eqref{eq:dykstra} to skip. Following the end of the stalling period, one half-space is discarded from the active half-space and $\mathcal{A}$ redefined, upon which the algorithm may again encounter a stalling condition. By Theorem~\ref{thm:nstall}, the stalling period can be fast-forwarded by applying constant increments to the auxiliary variables $k_{m}$. Theorem~\ref{thm:nstall} and Dykstra's algorithm are combined in Algorithm~\ref{alg:fastforward}.
 
-\algnewcommand\Inputs{\item[\textbf{Inputs:}]}
-\algnewcommand\Outputs{\item[\textbf{Output:}]}
-
-\begin{algorithm}
-\caption{Dykstra's projection algorithm for polyhedral sets with fast forwarding.}
-\label{alg:fastforward}
-\begin{algorithmic}[1]
-    \Inputs $x^\circ, \{a_i, b_i\}_{i=0}^{n-1}, N_{\max}, \epsilon_{\text{stall}}$
-    \Outputs projection $x_m$
-        \State $x_0 \leftarrow x^\circ$; $e_j \leftarrow 0\,\forall j\in\lbrace -n,\dots,-1\rbrace$;  $m \leftarrow 0$ 
-        % \Statex\hrulefill
-        \While{$m < N_{\max}$}
-            \State $x_{m+1} \leftarrow \mathcal{P}_{[m]}(x_m + e_{[m-n]})$
-            \State $e_{m} \leftarrow e_{m-n} + x_m - x_{m+1}$
-            \If{$m \ge n-1 \;\textbf{and}\;\twonorm{x_{m+1-i} - x_{m+1-i-n}} < \epsilon_{\text{stall}}\;\forall i\in\{0,\dots,n-1\}$}\label{alg:start} \algcomment{Stalling detected per Definition~\ref{def:stalling}}
-                \State Obtain $N_\text{stall}$ and $i_\text{stall}$ from Theorem~\ref{thm:nstall}
-                \For{$j \in \lbrace 0,\dots,n-1\rbrace$}
-                    \State $N_\text{skip}\leftarrow N_\text{stall}$ \textbf{if} $[m-j]\leq i_\text{stall}$ \textbf{else} $N_\text{stall}-1$
-                    \State $e_{m-j} \leftarrow e_{m-j} + N_\text{skip}(a_{[m-j]}^T x_{m-j} - b_{[m-j]})a_{[m-j]}$\algcomment{Fast-forward auxiliary variable}
-                \EndFor
-                \State $m \leftarrow m - i_\text{stall}$\label{alg:end}\algcomment{Adjust iteration counter}
-            \Else
-                \State $m \leftarrow m + 1$
-            \EndIf
-        \EndWhile
-        \State \Return $x_{m-1}$
-\end{algorithmic}
-\end{algorithm}
-
-The algorithm proceeds identically to the standard Dykstra update until it detects stalling by verifying the stationarity condition $x_m = x_{m-n}$ for all half-spaces, as per Definition~\ref{def:stalling}. Once stalling is detected at iteration $m$, the algorithm executes its fast-forwarding phase: after performing the standard variable update for the current iteration, it computes the exact number of required stalling cycles, $N_\text{stall}$, and the half-space at which stalling ends, $i_\text{stall}$, by calling a function that implements Theorem~\ref{thm:nstall}, determining the number of full $n$-step cycles to skip. For each of the $n$ auxiliary variables $e_j$, the algorithm then computes the constant increment $\Delta e_j = (a_j^T x_{\text{stall}} - b_j)a_j$ and applies a single update: $e_j \leftarrow e_j + N_{\text{skip}} \Delta e_j$, where $N_{\text{skip}}=N_{\text{stall}}$ if $i_{\text{stall}}\geq j$ and $N_{\text{skip}}=N_{\text{stall}}-1$ otherwise. This ``jumps'' the dual variables forward to their state following the stalling period. Finally, the main iteration counter $m$ is adjusted. For practical purposes, in this implementation Algorithm~\ref{alg:fastforward} is executed for a fixed number of iterations $N_{\text{max}}$, the stationarity condition is enforced with a small nonzero tolerance $\epsilon_{\text{stall}}$, and technical details such as updating the set of active half-spaces \textit{a priori} and throughout the algorithm are omitted.
-
-Since the proposed algorithm achieves the same iterates after escaping the stalling period (lines \ref{alg:start}--\ref{alg:end}) as would be attained with Dykstra's method, the Boyle-Dykstra theorem~\cite{DYKSTRA} is retained and the iterates are guaranteed to converge to the optimal solution $x^\star$ asymptotically. This is formalised in Corollary~\ref{cor:convergence} below.
-
-\begin{corollary}[Convergence of Algorithm~\ref{alg:fastforward}~\cite{DYKSTRA}]
-\label{cor:convergence}
-The sequence of iterates $\{x_m\}$ generated by Algorithm~\ref{alg:fastforward} converges asymptotically to the optimal solution $x^\star = \mathcal{P}_{\mathcal{H}}(x^\circ)$, i.e.\ $\lim_{m\rightarrow\infty}\|x_m-x^\star\|_2=0$.
-\end{corollary}
+It is important to note that the quantity $N_\text{stall}$ derived in Theorem~\ref{thm:nstall} strictly refers to the number of full $n$-step cycles of~\eqref{eq:dykstra} that must elapse. Following the conclusion of the stalling period, one specific constraint is discarded from the active half-space set, and the subset $\mathcal{A}$ must be redefined. Upon this redefinition and subsequent spatial movement, the algorithm may again navigate into a separate geometric corner that triggers a new stalling condition.

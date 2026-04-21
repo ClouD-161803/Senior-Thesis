@@ -1,4 +1,4 @@
-\documentclass[lof,lot,los,12pt,advisercopy]{puseniorthesis}
+\documentclass[lof,lot,12pt,progress]{puseniorthesis}
 %options to class:
 % lof - generate list of figures
 % lot - generate list of tables
@@ -34,14 +34,16 @@
 \input{sections/1_1_introduction}
 
 \chapter{Fast-forwarding stalling in Dykstra's algorithm} \label{ch:dykstra}
+\input{sections/2_0_dykstra_overview}
 \input{sections/2_1_background_projections}
 \input{sections/2_2_dykstras_algorithm}
 \input{sections/2_3_stalling_phenomenon}
 \input{sections/2_4_closed_form_solution}
 \input{sections/2_5_fast_forward_algorithm}
 \input{sections/2_6_numerical_experiments}
+\input{sections/2_7_dykstra_summary}
 
-\chapter{Optimal transport and triangular maps} \label{ch:optimal_transport}
+\chapter{Optimal transport} \label{ch:optimal_transport}
 % \input{sections/3_1_optimal_transport_kr}
 % \input{sections/3_2_hermite_basis}
 % \input{sections/3_3_physical_structure}
@@ -61,8 +63,10 @@
 \chapter{Conclusion and future work} \label{ch:conclusion}
 \input{sections/6_1_conclusion}
 
+\clearpage
 \printbibliography
 
+\clearpage
 \appendix
 
 \textcolor{red}{APPENDIX}

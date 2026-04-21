@@ -1,1 +1,47 @@
 \section{The stalling phenomenon} \label{sec:stalling_phenomenon}
+
+Despite its strong theoretical convergence guarantees (Boyle-Dykstra Theorem) and low computational overhead, Dykstra's algorithm is known to suffer from a computational flaw known as the \emph{stalling} phenomenon~\cite{DYKSTRASTALLING}. For specific geometric configurations, particularly near ``corner'' intersections of multiple constraint hyperplanes, the iterates can enter repetitive cycles. During these cycles, the primary iterate $w^{(m)}$ ceases to progress towards the optimal projection $w^\star$, remaining strictly unchanged for an unforeseen number of iterations.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\linewidth]{figures/StallingRegionsHand.png}
+    \caption{Stalling regions for the line-box example as defined in~\cite{DYKSTRASTALLING}.}
+    \label{fig:stalling_regions}
+\end{figure}
+
+To understand the mechanics of this stalling effect, we examine a foundational geometric example provided by Bauschke et al.~\cite{DYKSTRASTALLING}. The authors analyse the behaviour of Dykstra's method for a simple polyhedral set in $\mathbb{R}^2$, defined by the intersection of a unit box and a line. They establish that the convergence behaviour of the algorithm is entirely dictated by the spatial location of the initial unconstrained point $w^\circ$. By evaluating different starting conditions, the state space can be partitioned into three distinct regions yielding fundamentally different convergence properties:
+\begin{enumerate}
+    \item \textbf{Finite convergence:} The algorithm identifies the true projection $w^\star$ in a finite number of cycles.
+    \item \textbf{Infinite convergence:} The iterates approach $w^\star$ asymptotically without stalling.
+    \item \textbf{Stalling followed by infinite convergence:} The iterates become trapped in a static cycle for a finite duration before breaking free and converging asymptotically.
+\end{enumerate}
+
+These three starting domains are visualised in Figure~\ref{fig:stalling_regions} as the green, blue, and red regions, respectively.
+
+When the starting point $w^\circ$ originates within the red region, the stalling phenomenon is triggered. Assuming the algorithm projects onto the box constraints first, followed by the line, the primary iterate $w^{(m)}$ will repeatedly land exactly on the top-left corner of the box. For several consecutive cycles, Dykstra's algorithm returns this exact same sub-optimal coordinate. The authors demonstrate that the exact number of cycles required to break free from this stall is proportional to the distance of the starting point from the boundary of the red region. If $w^\circ$ is initialised arbitrarily far to the top-left, the algorithm will require an arbitrarily large number of iterations before the primary iterate moves away from the corner. 
+
+By graphically examining the line-box example and cross-referencing the algebraic update rules defined in~\eqref{eq:dykstra}, we can extract two fundamental mathematical observations regarding the behaviour of the algorithm during a stall. These observations form the analytical foundation for detecting and eventually bypassing the stalling period, which we later formalise in Section~\ref{sec:closed_form_solution}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/Stalling_geometry_no_errors.png}
+    \caption{A demonstration of the stalling phenomenon for the line-box example.}
+    \label{fig:stalling_demo_no_errors}
+\end{figure}
+
+First, the stalling period is strictly maintained as long as the active constraint set remains unchanged. The stall continues until at least one half-space that is active for the initial point $w^\circ$, but is ultimately inactive for the true optimal projection $w^\star$, transitions from active to inactive. This condition is necessary for the algorithm to break the cycle and resume its descent towards the optimal solution.
+
+Second, during the stalling phase, the primary iterates exhibit strict periodicity. For every iteration $m$ within the stall duration, it holds that $w^{(m)} = w^{(m-n)}$. Because the primary variables remain ``spatially frozen'' across cycles, the auxiliary update rule dictates that a constant vector is repeatedly added to the error variables $e^{(m)}$. Specifically, at each cycle, a constant corrective vector $w^{(m-1)} - w^{(m)}$ is summed to the respective auxiliary variable $e^{(m)}$. This predictable linear accumulation of the error variables is what ultimately forces the augmented pre-projection point to cross a hyperplane boundary, thereby breaking the stall.
+
+These effects are visualised for the same line-box example in Figures~\ref{fig:stalling_demo_no_errors}--\ref{fig:stalling_demo_with_errors}, where we initialise the unconstrained iterate at $w^\circ = (-2.0, 1.4)$ (which lies within the red region of Figure~\ref{fig:stalling_regions}) and run Dykstra's algorithm for a few cycles.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{figures/Stalling_demonstration_with_errors.png}
+    \caption{Stalling break-through for the line-box example.}
+    \label{fig:stalling_demo_with_errors}
+\end{figure}
+
+Figure~\ref{fig:stalling_demo_no_errors} plots the line and box as grey shaded regions, and the unconstrained iterate $w^\circ$ as a blue dot. Three cycles of the algorithm are run, and the error variables $e^{(m)}$ are plotted as grey quivers. At the beginning of the run, there are three active half-spaces, namely the left and top side of the box, and the top-right side of the line. Dykstra's algorithm proceeds by projecting on the left side of the box first, then the top side of the box, and ultimately the top-right side of the line. The error quivers are plotted with their tail at the projected iterate $w^{(m+1)}$ and their heads at the unprojected iterate $w^{(m)}$. We can see that the error iterate associated with the left side of the box is shrinking, whereas the other two are growing, all by respective constant factors. From this figure, we can foresee that the active half-space that will become inactive to break stalling is the left side of the box, and stalling will end when the error variable associated with this half-space becomes negative.
+
+Figure~\ref{fig:stalling_demo_with_errors} plots the same scenario with a zoomed-in view (top plot), and, additionally, the squared errors at the end of each cycle (defined as the squared $\ell_2$-norm of the iterates minus optimal solution $w^{(m)} - w^\star$, middle plot), and the activity of the half-spaces (1 for \emph{active}, 0 for \emph{inactive}, bottom plot), where the left side of the box, top side of the box and top-right side of the line correspond to halfspaces 0, 1, and 2, respectively. After 6 cycles, the left side of the box becomes inactive, and the squared error, which had remained constant through the stalling period, starts shrinking again. The algorithm has effectively escaped stalling, which for this example lasted for $N=5$ cycles.

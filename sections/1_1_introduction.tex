@@ -33,11 +33,11 @@ Instead of propagating the physical probability measure directly through the non
 
 \section{Computational challenges}
 
-While triangular maps provide an elegant theoretical framework for probability transport, translating this continuous abstraction into a functional computational tool introduces significant engineering challenges. In learning multi-dimensional maps, first-order optimisation methods such as projected gradient descent (PGD) offer significant computational advantages over more sophisticated frameworks such as quasi-Newton methods used in the literature~\cite{Baptista2022}.
+While triangular maps provide an elegant theoretical framework for probability transport, translating this continuous abstraction into a functional computational tool introduces significant engineering challenges. In learning multi-dimensional maps, first-order optimisation methods such as projected gradient descent (PGD) offer significant computational advantages over more sophisticated frameworks such as quasi-Newton or interior-point methods used in the literature~\cite{Baptista2022}.
 
 In the PGD framework we propose in this thesis, to preserve the physical validity of the transported probability distribution, the learned map must remain strictly monotonic. This requirement manifests as a large number of linear inequality constraints, defining a strict permissible region for the map's parameters. Geometrically, this space of valid parameters forms a sparse, multi-dimensional polyhedron. Whenever the PGD algorithm pushes the parameters outside the valid region, they must be mathematically mapped back to the closest point on the boundary of the polyhedron. This fundamental operation is known as a Euclidean projection.
 
-\section{Dykstra's algorithm and the stalling phenomenon}
+\section{Dykstra's algorithm and stalling}
 
 Since we require a Euclidean projection at every single epoch of a high-frequency learning loop, the choice of projection algorithm dictates the overall viability of the tracking framework. Standard interior-point optimisation software is often computationally prohibitive for such large-scale, high-dimensional tasks. Dykstra's projection algorithm offers a computationally inexpensive, scalable solution to compute these Euclidean projections. Utilised across various engineering disciplines---such as restricted least squares in machine learning or model predictive control---Dykstra's algorithm breaks down the (often intractable) joint projection into a sequence of simple iterative steps, offering phenomenally low per-iteration computational overhead.
 
