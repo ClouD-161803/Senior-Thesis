@@ -4,7 +4,7 @@ This chapter outlined the mathematical foundation of the optimal transport frame
 
 \subsection{Connection with Dykstra's algorithm}
 
-To navigate this constrained landscape, we implement a Projected Gradient Descent (PGD) framework. In this approach (which we will treat in more detail in Chapter~\ref{ch:optimisation}), we compute the gradient of the objective and take an unconstrained descent step, resulting in an intermediate, unconstrained point which we denote $w^\circ$. 
+To navigate this constrained landscape, we implement a \emph{projected gradient descent} (PGD) framework. In this approach (which we will treat in more detail in Chapter~\ref{ch:optimisation}), we compute the gradient of the objective and take an unconstrained descent step, resulting in an intermediate, unconstrained point which we denote $w^\circ$. 
 
 Since the unconstrained point $w^\circ$ will frequently violate the monotonicity conditions (i.e., $w^\circ \notin \mathcal{H}$), we must project it back onto the feasible polyhedral intersection at each PGD iteration. This projection must alter the learned coefficients as minimally as possible to retain the maximum likelihood data. Therefore, the projection operation requires us to find the unique point $w^\star \in \mathcal{H}$ that minimises the Euclidean distance to the unconstrained point $w^\circ$. Mathematically, this is equivalent to solving the following CQP:
 \begin{equation}

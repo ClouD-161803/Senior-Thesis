@@ -20,7 +20,7 @@ By exploiting the linearity of the derivative operator across the polynomial bas
 \end{equation*}
 
 Geometrically, each row of the matrix $-A$ defines a distinct closed half-space for a corresponding particle ${x^{(i)}}$ upon which the monotonicity constraint~\eqref{eq:discrete_monotonicity} is evaluated. The truncated Hermite polynomial degree $J_k+1$ is practically chosen high enough to model the effects of the physical distribution shift. For consistency with Chapter~\ref{ch:dykstra} and ease of notation, we will hereafter denote this degree as $d = J_k+1$ (not to be confused with $D$, the physical dimension of particles $\{x^{(i)}\}_{i=1}^n$). The feasible region for the optimal map coefficients is thus defined by the intersection of $n$ half-spaces, forming a dense polyhedral set, denoted as in Chapter~\ref{ch:dykstra} as:
-\begin{equation*}
+\begin{equation}
     \mathcal{H} = \left\{ w \in \mathbb{R}^{d} \mid -A w \le -\epsilon_m \right\}.
     \label{eq:polyhedral_set}
-\end{equation*}
+\end{equation}

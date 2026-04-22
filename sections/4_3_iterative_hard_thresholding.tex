@@ -1,0 +1,52 @@
+\section{Iterative hard thresholding} \label{sec:iht}
+
+As the spatial dimension of the physical system increases, the number of polynomial coefficients parameterising the Knothe-Rosenblatt map scales rapidly. Although the total degree truncation introduced in Chapter~\ref{ch:optimal_transport} provides \emph{a priori} structural sparsity, the continuous optimisation process will nonetheless assign non-zero yet values to basis terms that possess no physical significance. Over thousands of learning iterations, these numerical artifacts accumulate, degrading computational efficiency and generalisation.
+
+To enforce physical sparsity during the training process, we incorporate Iterative Hard Thresholding (IHT) into the outer learning loop. IHT functions as a periodic filtering mechanism that evaluates the magnitude of the coefficient iterates and forcibly zeroes out any terms falling below a designated scalar tolerance. Once a coefficient is pruned, it is permanently locked at zero for the remainder of the optimisation.
+
+Mathematically, we introduce a pruning threshold $\epsilon_p > 0$ and a pruning interval $K \in \mathbb{N}$, ensuring the filtering operation only occurs every $K$ iterations to allow the weights time to settle. We define a boolean active mask vector $\mathcal{M}^{(t)} \in \{0, 1\}^d$, initialised as a vector of ones, $\mathcal{M}^{(0)} = \mathbf{1}$. At iteration $t$, if $t \pmod K \equiv 0$, the mask is updated via element-wise multiplication (Hadamard product) with an indicator function:
+\begin{equation*}
+    \mathcal{M}^{(t)} = \mathcal{M}^{(t-1)} \odot \mathbb{I}(|w^{(t)}| \ge \epsilon_p)
+\end{equation*}
+The mask $\mathcal{M}^{(t)}$ is immediately applied to the current weights $w^{(t)}$ via the Hadamard product to enforce the threshold. For our $d$-dimensional coefficient vector $w^{(t)}$ and boolean mask $\mathcal{M}^{(t)}$, this operation is defined component-wise as
+\begin{equation*}
+    [w^{(t)} \odot \mathcal{M}^{(t)}]_i = w_i^{(t)} \mathcal{M}_i^{(t)} \quad i = 1, 2, \dots, d.
+\end{equation*}
+This linear algebraic operation ensures that if the $i$-th component of the mask evaluates to zero, the corresponding parameterised dimension in the coefficient space is collapsed to zero. To prevent the optimiser from attempting to descend along these pruned dimensions, the stochastic gradient $g^{(t)}$ is similarly masked before the unconstrained descent step. Furthermore, because the projection operator $\mathcal{P}_{\mathcal{H}}(\cdot)$ searches the full $d$-dimensional space to satisfy the constraints, the output of the Dykstra algorithm must be re-masked to prevent the projection from reactivating pruned coefficients.
+To prevent the optimiser from attempting to descend along pruned dimensions, the stochastic gradient $g^{(t)}$ is also masked prior to the unconstrained descent step. Furthermore, because the projection operator $\mathcal{P}_{\mathcal{H}}(\cdot)$ searches the full $d$-dimensional space to satisfy the constraints, the output of the Dykstra algorithm must be re-masked to prevent the projection from reactivating pruned coefficients.
+
+Because the target particle coordinates are fixed during the estimation of a specific map component, the projection variables $A$ and $\epsilon_m$ are pre-computed before the initialisation of the PGD framework, permanently defining the static polyhedral set $\mathcal{H}$ onto which every unconstrained step $w^\circ$ must be projected.
+
+Algorithm~\ref{alg:inexact_pgd} unifies the learning rate decay, mini-batch gradient evaluation, and IHT masking into the complete architecture governing the PGD outer loop.
+
+\begin{algorithm}[H]
+\caption{Inexact Projected Gradient Descent Framework}
+\label{alg:inexact_pgd}
+\begin{algorithmic}[1]
+\State \textbf{Input:} Initial weights $w^{(0)} \in \mathbb{R}^d$, objective $f(w)$, constraint matrix $A \in \mathbb{R}^{n \times d}$, monotonicity tolerance $\epsilon_m \in \mathbb{R}^n$, initial learning rate $\eta^\circ$, decay rate $\gamma$, max outer iteration budget $T$, batch size $B$, pruning threshold $\epsilon_p$, prune interval $K$, base Dykstra budget $M_{\mathrm{base}}$, Dykstra scaling exponent $p$
+\State $\mathcal{M}^{(0)} \gets \mathbf{1}_d$ \algcomment{Initialise active mask}
+\For{$t = 0, 1, \dots, T-1$}
+    \State $\eta^{(t)} \gets \eta^\circ / (1 + \gamma t)$ \algcomment{Calculate decayed learning rate}
+    \State Sample random mini-batch $\mathcal{B}^{(t)} \subset \{1, \dots, n\}$ of size $B$
+    \State $g^{(t)} \gets \frac{1}{B} \sum_{i \in \mathcal{B}^{(t)}} \nabla f_i(w^{(t)})$ \algcomment{Evaluate stochastic gradient}
+    
+    \If{$t > 0$ \textbf{and} $t \pmod K \equiv 0$}
+        \State $\mathcal{M}^{(t)} \gets \mathcal{M}^{(t-1)} \odot \mathbb{I}(|w^{(t)}| \ge \epsilon_p)$ \algcomment{Update active mask}
+    \Else
+        \State $\mathcal{M}^{(t)} \gets \mathcal{M}^{(t-1)}$ \algcomment{Retain current mask}
+    \EndIf
+    
+    \State $w^{(t)} \gets w^{(t)} \odot \mathcal{M}^{(t)}$ \algcomment{Prune thresholded weights}
+    \State $g^{(t)} \gets g^{(t)} \odot \mathcal{M}^{(t)}$ \algcomment{Mask gradient directions}
+    \State $w^\circ \gets w^{(t)} - \eta^{(t)} g^{(t)}$ \algcomment{Take unconstrained step}
+    
+    \State $w^{(t+1)} \gets \mathrm{Dykstra}(t, w^\circ, -A, -\epsilon_m, M_{\mathrm{base}}, p)$ \algcomment{Project onto feasible set $\mathcal{H}$}
+    \State $w^{(t+1)} \gets w^{(t+1)} \odot \mathcal{M}^{(t)}$ \algcomment{Enforce sparsity on projection}
+\EndFor
+\State \textbf{Return} $w^{(T)}$
+\end{algorithmic}
+\end{algorithm}
+
+Section~\ref{sec:inner_loop_integration} will detail the implementation of line 14, the inner loop projection.
+
+In addition to the core mechanisms outlined in Algorithm~\ref{alg:inexact_pgd}, the framework includes optional safeguards to maintain numerical stability during complex training scenarios. Highly nonlinear target distributions can occasionally produce anomalous gradient evaluations within a given mini-batch. To prevent these from destabilising the unconstrained descent phase, we implement element-wise gradient clipping. This operation bounds the magnitude of the stochastic gradient $g^{(t)}$ to a predefined scalar threshold before the descent step is taken, ensuring the parameter updates remain within a controlled numerical envelope. Furthermore, earlier versions of this architecture incorporated $\ell_1$ regularisation directly into the objective function. By adding a penalty term proportional to the absolute magnitude of the coefficients, this approach sought to suppress disproportionately large weights and encourage sparsity. However, empirical testing demonstrated that the explicit boolean masking provided by iterative hard thresholding achieves the necessary sparsity with greater computational efficiency and structural control. Consequently, $\ell_1$ regularisation is omitted from the primary algorithm and is reserved exclusively for degenerate cases where the coefficient landscape remains unstable despite gradient clipping.
