@@ -1,0 +1,59 @@
+% Optimisation and Dykstra's algorithm
+\addsymbol{$d$}{Optimisation state dimension}
+\addsymbol{$n$}{Total number of half-spaces or particles}
+\addsymbol{$\mathcal{H}$}{Polyhedral feasible set formed by the intersection of half-spaces}
+\addsymbol{$A$}{Constraint matrix}
+\addsymbol{$a_i$}{Unit normal vector defining the boundary of the $i$-th half-space}
+\addsymbol{$b_i$}{Boundary offset parameter of the $i$-th half-space}
+\addsymbol{$w$}{Spatial coordinate decision variable}
+\addsymbol{$w^\circ$}{Initial unconstrained point prior to projection}
+\addsymbol{$w^\star$}{True Euclidean projection onto the feasible set}
+\addsymbol{$m$}{Inner Dykstra projection cycle index}
+\addsymbol{$t$}{Outer projected gradient descent (PGD) learning loop index}
+\addsymbol{$w^{(t)}$}{Spatial weights at outer iteration $t$}
+\addsymbol{$w^{(m)}$}{Primary spatial coordinate at inner Dykstra iteration $m$}
+\addsymbol{$w^{(t, m)}$}{Double-indexed weights representing inner state $m$ at outer step $t$}
+\addsymbol{$e^{(m)}$}{Auxiliary memory variable evaluated at inner iteration $m$}
+\addsymbol{$k^{(m)}$}{Active half-space constraint index at inner iteration $m$}
+\addsymbol{$M^{(t)}$}{Dynamic inner Dykstra cycle iteration budget ceiling}
+\addsymbol{$M_{\mathrm{base}}$}{Base projection budget for the inner cycle}
+\addsymbol{$p$}{Dynamic iteration budget scaling exponent}
+\addsymbol{$\epsilon_m$}{Monotonicity tolerance vector}
+\addsymbol{$N_{\mathrm{stall}}$}{Closed-form stall duration}
+\addsymbol{$m_{\mathrm{stall}}$}{Iteration index denoting the onset of the stalling phenomenon}
+\addsymbol{$N_{\mathrm{skip}}$}{Fast-forward algorithmic skip duration}
+\addsymbol{$\mathcal{B}^{(t)}$}{Random subset of indices for stochastic mini-batching at iteration $t$}
+\addsymbol{$B$}{Mini-batch cardinality}
+\addsymbol{$g^{(t)}$}{Stochastic gradient evaluated over the selected mini-batch}
+\addsymbol{$\eta^{(t)}$}{Optimisation learning rate at iteration $t$}
+\addsymbol{$\eta^\circ$}{Initial base learning rate}
+\addsymbol{$\gamma$}{Learning rate decay parameter}
+\addsymbol{$\mathcal{M}^{(t)}$}{Boolean active mask vector governing iterative hard thresholding}
+\addsymbol{$\epsilon_p$}{Threshold parameter for pruning microscopic weights in IHT}
+\addsymbol{$K$}{Iterative hard thresholding application interval}
+\addsymbol{$T$}{Total outer PGD iteration limit}
+
+% Optimal transport and hypothesis space
+\addsymbol{$D$}{Physical state dimension of the underlying dynamical system}
+\addsymbol{$J_k + 1$}{Total dimension of the polynomial coefficient space}
+\addsymbol{$P$}{Maximum individual or total polynomial degree}
+\addsymbol{$\alpha^{(j)}$}{Multi-index governing the $j$-th multivariate basis function}
+\addsymbol{$\alpha_m^{(j)}$}{The $m$-th spatial component of the multi-index $\alpha^{(j)}$}
+\addsymbol{$x$}{Unmapped target particles (sheared representation)}
+\addsymbol{$z$}{Mapped particles targeted to a standard normal distribution}
+\addsymbol{$\tilde{z}$}{True multivariate standard normal reference samples}
+\addsymbol{$\tilde{S}$}{Artificial non-linear shear mapping function}
+\addsymbol{$\mathcal{S}_k$}{Function hypothesis space for scalar map components}
+\addsymbol{$\ell_2$}{Standard Euclidean distance norm}
+
+% Orbital mechanics and dynamics
+\addsymbol{$a$}{Semi-major axis of an orbital trajectory}
+\addsymbol{$e$}{Eccentricity of the orbit}
+\addsymbol{$i$}{Orbital inclination relative to the reference plane}
+\addsymbol{$\Omega$}{Right ascension of the ascending node}
+\addsymbol{$\omega$}{Argument of periapsis}
+\addsymbol{$\nu$}{True anomaly defining specific angular position}
+\addsymbol{$h, k$}{Components of the non-singular eccentricity vector}
+\addsymbol{$p, q$}{Components of the non-singular ascending node vector}
+\addsymbol{$\lambda$}{Mean longitude}
+\addsymbol{$\mathbb{R}^5 \times \mathbb{S}^1$}{Topological space parameterising the equinoctial orbital elements}

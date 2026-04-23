@@ -1,4 +1,4 @@
-\documentclass[lof,lot,12pt,progress]{puseniorthesis}
+\documentclass[lof,los,lot,12pt,progress]{puseniorthesis}
 %options to class:
 % lof - generate list of figures
 % lot - generate list of tables
@@ -14,7 +14,7 @@
 \author{Claudio Vestini}
 \classyear{`26}
 \adviser{Ryne Beeson, \newline Bartolomeo Stellato (ORFE)}
-\reader{\textcolor{red}{READER}}
+\reader{Luigi Martinelli}
 \title{\textcolor{red}{TITLE}}
 \dept{Mechanical and Aerospace Engineering}
 \submitdate{April 23, 2026}
@@ -23,12 +23,14 @@
 
 % Optional inputs (any of these can be omitted)
 % \extranotes{These are a few lines of optional notes} 
-\dedication{\textcolor{red}{DEDICATION}}
+\dedication{Ai miei genitori, Renato e Francesca, che mi hanno fortemente sorretto e sostenuto attraverso il mio percorso accademico.}
 \acknowledgements{\textcolor{red}{AKNOWLEDGMENTS}}
 
 \numberwithin{equation}{section}
 
 \begin{document}
+
+\input{list_of_symbols}
 
 \chapter{Introduction} \label{ch:introduction}
 \input{sections/1_1_introduction}
@@ -58,10 +60,12 @@
 \input{sections/4_4_inner_loop_integration}
 \input{sections/4_5_optimisation_summary}
 
-\chapter{Application to orbital mechanics} \label{ch:numerical_experiments}
-% \input{sections/5_1_satellite_uncertainty}
-% \input{sections/5_2_reconstructing_shear}
-% \input{sections/5_3_performance_scaling}
+\chapter{Experiments and applications} \label{ch:experiments_and_applications}
+\input{sections/5_0_results_overview}
+\input{sections/5_1_synthetic_distributions}
+\input{sections/5_2_aerospace_uncertainty}
+\input{sections/5_3_lorentz_63_model}
+% \input{sections/5_4_performance_scaling}
 
 \chapter{Conclusion and future work} \label{ch:conclusion}
 \input{sections/6_1_conclusion}

@@ -4,7 +4,7 @@ As the spatial dimension of the physical system increases, the number of polynom
 
 To enforce physical sparsity during the training process, we incorporate Iterative Hard Thresholding (IHT) into the outer learning loop. IHT functions as a periodic filtering mechanism that evaluates the magnitude of the coefficient iterates and forcibly zeroes out any terms falling below a designated scalar tolerance. Once a coefficient is pruned, it is permanently locked at zero for the remainder of the optimisation.
 
-Mathematically, we introduce a pruning threshold $\epsilon_p > 0$ and a pruning interval $K \in \mathbb{N}$, ensuring the filtering operation only occurs every $K$ iterations to allow the weights time to settle. We define a boolean active mask vector $\mathcal{M}^{(t)} \in \{0, 1\}^d$, initialised as a vector of ones, $\mathcal{M}^{(0)} = \mathbf{1}$. At iteration $t$, if $t \pmod K \equiv 0$, the mask is updated via element-wise multiplication (Hadamard product) with an indicator function:
+Mathematically, we introduce a pruning threshold $\epsilon_p > 0$ and a pruning interval $K_{\mathrm{IHT}} \in \mathbb{N}$, ensuring the filtering operation only occurs every $K_{\mathrm{IHT}}$ iterations to allow the weights time to settle. We define a boolean active mask vector $\mathcal{M}^{(t)} \in \{0, 1\}^d$, initialised as a vector of ones, $\mathcal{M}^{(0)} = \mathbf{1}$. At iteration $t$, if $t \pmod {K_{\mathrm{IHT}}} \equiv 0$, the mask is updated via element-wise multiplication (Hadamard product) with an indicator function:
 \begin{equation*}
     \mathcal{M}^{(t)} = \mathcal{M}^{(t-1)} \odot \mathbb{I}(|w^{(t)}| \ge \epsilon_p)
 \end{equation*}
@@ -23,14 +23,14 @@ Algorithm~\ref{alg:inexact_pgd} unifies the learning rate decay, mini-batch grad
 \caption{Inexact Projected Gradient Descent Framework}
 \label{alg:inexact_pgd}
 \begin{algorithmic}[1]
-\State \textbf{Input:} Initial weights $w^{(0)} \in \mathbb{R}^d$, objective $f(w)$, constraint matrix $A \in \mathbb{R}^{n \times d}$, monotonicity tolerance $\epsilon_m \in \mathbb{R}^n$, initial learning rate $\eta^\circ$, decay rate $\gamma$, max outer iteration budget $T$, batch size $B$, pruning threshold $\epsilon_p$, prune interval $K$, base Dykstra budget $M_{\mathrm{base}}$, Dykstra scaling exponent $p$
+\State \textbf{Input:} Initial weights $w^{(0)} \in \mathbb{R}^d$, objective $f(w)$, constraint matrix $A \in \mathbb{R}^{n \times d}$, monotonicity tolerance $\epsilon_m \in \mathbb{R}^n$, initial learning rate $\eta^\circ$, decay rate $\gamma$, max outer iteration budget $T$, batch size $B$, pruning threshold $\epsilon_p$, prune interval $K_{\mathrm{IHT}}$, base Dykstra budget $M_{\mathrm{base}}$, Dykstra scaling exponent $p$
 \State $\mathcal{M}^{(0)} \gets \mathbf{1}_d$ \algcomment{Initialise active mask}
 \For{$t = 0, 1, \dots, T-1$}
     \State $\eta^{(t)} \gets \eta^\circ / (1 + \gamma t)$ \algcomment{Calculate decayed learning rate}
     \State Sample random mini-batch $\mathcal{B}^{(t)} \subset \{1, \dots, n\}$ of size $B$
     \State $g^{(t)} \gets \frac{1}{B} \sum_{i \in \mathcal{B}^{(t)}} \nabla f_i(w^{(t)})$ \algcomment{Evaluate stochastic gradient}
     
-    \If{$t > 0$ \textbf{and} $t \pmod K \equiv 0$}
+    \If{$t > 0$ \textbf{and} $t \pmod {K_{\mathrm{IHT}}} \equiv 0$}
         \State $\mathcal{M}^{(t)} \gets \mathcal{M}^{(t-1)} \odot \mathbb{I}(|w^{(t)}| \ge \epsilon_p)$ \algcomment{Update active mask}
     \Else
         \State $\mathcal{M}^{(t)} \gets \mathcal{M}^{(t-1)}$ \algcomment{Retain current mask}
