@@ -1,39 +1,58 @@
 \section{Performance scaling experiment} \label{sec:performance_scaling}
 
-\subsection{Numerical results} \label{sec:numerical_results}
+Integrating the closed-form stall-resolution algorithm within the optimal transport architecture provides a theoretical foundation for uncertainty propagation and data assimilation applications, as demonstrated throughout this chapter. Nevertheless, the practical utility of this framework depends on its computational feasibility for complex physical systems. Although tests on low-dimensional attractors confirm the algorithmic consistency of the custom projection operator, an effective map reconstruction pipeline must accommodate expanding model dimensions while avoiding the numerical bottlenecks that often impair standard iterative solvers.
 
-\begin{figure}[htbp]
-    \centering
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/solver_runtime_vs_dimension_component_TS=20260421_RegenTS=20260422-121449.png}
-        \caption{Component TS}
-        \label{fig:solver_runtime_component}
-    \end{subfigure}\hfill
-    \begin{subfigure}[t]{0.48\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{figures/solver_runtime_vs_dimension_fullmap_TS=20260421_RegenTS=20260422-121449.png}
-        \caption{Full map}
-        \label{fig:solver_runtime_fullmap}
-    \end{subfigure}
-    \caption{Solver runtime versus dimension for the two test settings.}
-    \label{fig:solver_runtime_side_by_side}
-\end{figure}
+As the physical dimensionality $D$ of the state space increases, the number of basis functions grows combinatorially, as we have showcased in Chapter~\ref{ch:optimal_transport}, Section~\ref{subsec:total_defree truncation}. This expansion also raises the dimensionality $d$ of the projection decision variables. For Hermite polynomial bases of degree $J_k+1$ in $D$ dimensions, the number of basis functions scales as $\mathcal{O}(D^{J_k+1})$, which directly affects the computational complexity of the optimisation problem. To establish the practical relevance of the optimal transport framework for high-dimensional problems, we evaluate the computational scaling of the fast-forward Dykstra algorithm relative to established optimisation software.
+
+\subsection{Experimental setup} \label{sec:scaling_setup}
+
+The scaling study evaluates the computational cost of transport map reconstruction as the state dimension $D$ ranges from 2 to 20. For each dimension, the system is initialised with hyperparameters: $J_k+1 = 2$, $n = 200$ particles, and $T-1 = 1000$ PGD iterations. Three independent realisations are performed for each dimension, each with a distinct random seed, to estimate the mean execution time and variance. For this test, we focus on benchmarking the execution time on the projection step specifically, rather than the entire optimisation problem. Since the main advancement brought forward by this thesis is on the stalling fast-forwarding and accelerations to Dykstra's algorithm, this benchmark isolates the performance of Algorithm~\ref{alg:accelerated_dykstra} from the entire optimisation routine.
+
+The fast-forward Dykstra algorithm is benchmarked against two established numerical routines: the Sequential Least Squares Programming (SLSQP) implementation from the SciPy library~\cite{Virtanen2020}, which offers general-purpose convex optimisation via interior-point methods, and the Operator Splitting Quadratic Program (OSQP) solver~\cite{osqp}, which is tailored for large-scale quadratic programs using the alternating direction method of multipliers (ADMM).
+
+\subsection{Numerical results} \label{sec:scaling_numerical_results}
+
+The runtime measurements record the total elapsed time required to solve the projection problem $\mathcal{P}_{\mathcal{H}}(w^\circ)$ across all $D$ components of the map. This includes initialisation, constraint evaluation, solver execution, and result assembly, thereby providing a realistic assessment of practical wall-clock time for the complete Dykstra pipeline.
 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/fast_vs_scipy_component_log_scale.png}
-        \caption{Component}
+        \caption{Per-component runtime (scalar map).}
         \label{fig:fast_vs_scipy_component}
     \end{subfigure}\hfill
     \begin{subfigure}[t]{0.48\textwidth}
         \centering
         \includegraphics[width=\linewidth]{figures/fast_vs_scipy_overall_log_scale.png}
-        \caption{Overall}
+        \caption{Full map runtime (all components).}
         \label{fig:fast_vs_scipy_overall}
     \end{subfigure}
-    \caption{Runtime comparison between the fast solver and SciPy on a log scale.}
+    \caption{Runtime scaling comparison: fast-forward Dykstra versus SciPy SLSQP.}
     \label{fig:fast_vs_scipy_side_by_side}
 \end{figure}
+
+Figure~\ref{fig:fast_vs_scipy_side_by_side} shows the execution time required to project the weights onto the feasible set $\mathcal{H}$ using the fast-forward Dykstra algorithm compared to the SciPy SLSQP solver. Both component-wise evaluation (Figure~\ref{fig:fast_vs_scipy_component}) and full map reconstruction (Figure~\ref{fig:fast_vs_scipy_overall}) are presented on a logarithmic scale to emphasise scaling differences across dimensions. As the state dimension increases, the SciPy routine exhibits substantial computational scaling, with execution time nearly doubling for each additional dimension in higher-dimensional settings. This superlinear scaling results from the increasing complexity of the constraint array and the computational overhead of general-purpose interior-point methods. In contrast, the custom fast-forward Dykstra solver displays much lower growth rates, with runtime scaling approximately linearly with dimension.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/solver_runtime_vs_dimension_component_TS=20260421_RegenTS=20260422-121449.png}
+        \caption{Per-component runtime (scalar map).}
+        \label{fig:solver_runtime_component}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/solver_runtime_vs_dimension_fullmap_TS=20260421_RegenTS=20260422-121449.png}
+        \caption{Full map runtime (all components).}
+        \label{fig:solver_runtime_fullmap}
+    \end{subfigure}
+    \caption{Runtime scaling comparison: fast-forward Dykstra versus OSQP.}
+    \label{fig:solver_runtime_side_by_side}
+\end{figure}
+
+To further assess performance in high-dimensional settings and evaluate scalability relative to a state-of-the-art sparse QP solver, a secondary benchmark is conducted against OSQP. Figure~\ref{fig:solver_runtime_side_by_side} displays runtime metrics on a linear scale for both individual map components and the overall system. While OSQP exhibits substantially better scaling than the standard SciPy implementation, the fast-forward Dykstra algorithm consistently achieves lower execution times across all tested dimensions. For example, at $D = 20$ dimensions, the custom solver completes full map reconstruction in approximately 148 seconds, compared to 169 seconds for OSQP, representing a 12\% reduction. Notably, the improved scaling trajectory indicates that this performance gap is likely to increase further in higher dimensions.
+
+
+The computational advantage of the fast-forward Dykstra algorithm stems from several architectural decisions that minimise the projection-loop overhead. First, the algorithm circumvents the dense matrix factorisations and iterative refinements required by general-purpose interior-point and splitting methods. Second, the stalling detection and half-space removal enhancements help eliminate redundant constraint evaluations, reducing the total number of half-space projections from $\mathcal{O}(M \times D)$ to a number of operations empirically lower. These findings demonstrate that custom projection algorithms can provide significant performance improvements for structured optimisation problems encountered in optimal transport.
