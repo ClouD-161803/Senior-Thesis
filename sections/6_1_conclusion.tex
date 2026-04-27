@@ -1,7 +1,19 @@
-\section{Conclusion} \label{sec:conclusion}
+This thesis integrates advances in foundational mathematical optimisation with applications in aerospace and geophysics. We have presented a resolution of the stalling phenomenon and several other enhancements to Dykstra's algorithm, along with a highly scalable framework for computing optimal transport maps, demonstrating the efficacy and applicability of the architecture on several engineering examples.
 
-\textcolor{red}{CONCLUSION}
+\section{Summary of research contributions} \label{sec:summary_of_contributions}
 
-\subsection{Dykstra Conclusion}
+The stalling phenomenon in Dykstra's projection algorithm addressed in Chapter~\ref{ch:dykstra}. The stalling period for polyhedral sets is formally defined, and its duration is derived in closed form (Theorem~\ref{thm:nstall}). Building on this mathematical result, a modified fast-forward algorithm is introduced to detect stalling and advance the auxiliary memory variables beyond the stalled cycle in a single computational step (Algorithm~\ref{alg:fastforward}). This modification eliminates unpredictable execution times while preserving the asymptotic convergence guarantees of the Boyle-Dykstra theorem (Corollary~\ref{cor:convergence}).
 
-We identify several directions for future research. First, extending the analysis from polyhedral sets to broader classes of convex sets would enhance the generality of the results. Second, applying our method to a reformulated linear program in which the optimality conditions are decomposed into a convex and a conic set could provide a benchmark for evaluating the proposed approach. Finally, although we have improved Dykstra's overall convergence properties by eliminating stalling, we have not been able to show that our modified version yields iterates $x_m$ that \emph{monotonically} approach the projection $x^\star$. According to the analysis in~\cite{DYKSTRAPOLY}, the algorithm successively discards sets $\mathcal{H}_i$ for which $x^\star\in\text{int}\,\mathcal{H}_i$, and during these phases, the algorithm can produce iterates that temporarily diverge from $x^\star$. Developing a similar fast-forwarding technique for these non-stalling phases would enable monotonic convergence of the iterates, allow \textit{a priori} bounds on the error $\anynorm{x_m-x^\star}$, and provide deterministic guarantees on solution quality for any fixed iteration budget.
+The optimal transport backbone is introduced in Chapter~\ref{ch:optimal_transport}. The theory of Knothe-Rosenblatt triangular maps is developed in this chapter, culminating in the formulation of the constrained optimisation problem with objective~\eqref{eq:finite_objective} and constraints~\eqref{eq:discrete_monotonicity}.
+
+The scalable, inexact projection framework is presented in Chapter~\ref{ch:optimisation}. An accelerated version of the fast-forward Dykstra solver (Algorithm~\ref{alg:accelerated_dykstra}) is embedded within an outer projected gradient descent loop (Algorithm~\ref{alg:inexact_pgd}).
+
+The empirical effectiveness of the combined framework is demonstrated in Chapter~\ref{ch:experiments_and_applications}. When applied to orbital mechanics, the engine reconstructs nonlinear ground-truth physical shears, capturing the heavy-tailed, coupled distributions that challenge classical linearised filtering techniques. In geophysics applications, the framework delivers reliable, fast performance for approximating continuous mappings without requiring the solution of differential equations. Performance scaling metrics confirm the computational viability of the fast-forward modification for large-scale applications.
+
+\section{Future work} \label{sec:future_work}
+
+The findings of this thesis suggest several directions for further research in both optimisation theory and aerospace engineering.
+
+From the optimisation perspective, extending the stalling analysis beyond polyhedral constraints to encompass broader classes of convex sets would increase the generality of the fast-forward modification.
+
+In the applied aerospace domain, future research should focus on integrating the optimal transport framework into a Kalman filter and an orbital elements propagator to build an end-to-end uncertainty estimation pipeline. In addition, incorporating real observational data into the stochastic gradient descent loop would assess the framework's robustness against measurement noise and sparse tracking data. Integrating this probability transport engine with operational space situational awareness software could establish a continuous pipeline for autonomous assessment of collision probability.
